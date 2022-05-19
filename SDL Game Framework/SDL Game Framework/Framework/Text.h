@@ -66,3 +66,17 @@ void Text_SetFontStyle(Text* text, EFontStyle style);
 EFontStyle Text_GetFontStyle(const Text* text);
 
 void Text_LoadText(Text* text, const char* filename);
+
+
+/// <summary>
+/// 한글자씩 출력되는 텍스트
+/// </summary>
+/// <param name="text">텍스트 객체</param>
+/// <param name="fontFile">폰트 파일</param>
+/// <param name="fontSize">글자 크기</param>
+/// <param name="str">유니코드 문자열</param>
+/// <param name="length">텍스트 길이</param>
+/// <param name="timer">출력 시간</param>
+void Text_CreateMoveText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length, static float timer);
+
+void Text_TextChoice(const Text* text, int32 Count);

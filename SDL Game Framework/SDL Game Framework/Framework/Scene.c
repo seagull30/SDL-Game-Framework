@@ -5,6 +5,9 @@
 
 Scene g_Scene;
 
+int32		Count;//Ïπ¥Ïö¥Ìä∏ Í∞í
+#define TEXT_COUNT 3//Î¨∏ÏûêÏó¥ Ïπ¥Ïö¥Ìä∏
+
 static ESceneType s_nextScene = SCENE_NULL;
 #define _MAX_SINEN_NUM 100
 #include "LoadCSV.h"
@@ -16,30 +19,19 @@ static ESceneType s_nextScene = SCENE_NULL;
 #define SHADED 1
 #define BLENDED 2
 
-const wchar_t* str[] = {
-	L"ø©±‚¥¬ ≈∏¿Ã∆≤æ¿¿‘¥œ¥Ÿ. ≈ÿΩ∫∆ÆøÕ ∞¸∑√µ» ø©∑Ø∞°¡ˆ∏¶ ≈◊Ω∫∆Æ«ÿ∫æΩ√¥Ÿ.",
-	L"B≈∞∏¶ ¥©∏£∏È ∆˘∆Æ∞° ±Ω∞‘ ∫Ø«’¥œ¥Ÿ.",
-	L"I≈∞∏¶ ¥©∏£∏È ∆˘∆Æ∞° ¿Ã≈≈∏Ø√º∑Œ ∫Ø«’¥œ¥Ÿ.",
-	L"U≈∞∏¶ ¥©∏£∏È ≈ÿΩ∫∆Æø° πÿ¡Ÿ¿Ã ª˝±È¥œ¥Ÿ.",
-	L"S≈∞∏¶ ¥©∏£∏È ≈ÿΩ∫∆Æø° √Îº“º±¿Ã ª˝±È¥œ¥Ÿ.",
-	L"N≈∞∏¶ ¥©∏£∏È ¥ŸΩ√ ø¯∑°¥Î∑Œ µπæ∆ø…¥œ¥Ÿ.",
-	L"C≈∞∏¶ ¥©∏£∏È ∑ª¥ı ∏µÂ∞° πŸ≤Ú¥œ¥Ÿ. (Solid -> Shaded -> Blended)",
-	L"1≈∞∏¶ ¥©∏£∏È ≈ÿΩ∫∆Æ∞° ¿€æ∆¡˝¥œ¥Ÿ.",
-	L"2≈∞∏¶ ¥©∏£∏È ≈ÿΩ∫∆Æ∞° ƒø¡˝¥œ¥Ÿ.",
-	L"Ω∫∆‰¿ÃΩ∫ ≈∞∏¶ ¥©∏£∏È ¥Ÿ¿Ω æ¿¿∏∑Œ ≥—æÓ∞©¥œ¥Ÿ."
-};
+const CsvFile csvFile;
 
 typedef struct TitleSceneData
 {
-	Text	GuideLine[10];
-	Text	TestText;
+	Text	Text1;
+	Text	Text2;
+	Text	Text3;
 	int32	FontSize;
 	int32	RenderMode;
-	Image	TestImage;
+	Image	index1;
+
 } TitleSceneData;
 
-static SceneData scenedata[_MAX_SINEN_NUM];
-const CsvFile csvFile;
 
 Music backmusic;
 char* prevPlayMusic;
@@ -50,8 +42,9 @@ void init_title(void)
 	g_Scene.Data = malloc(sizeof(TitleSceneData));
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
 	memset(&csvFile, 0, sizeof(CsvFile));
-	//CSVInit("∞‘¿”∫œ CSV - Ω√∆Æ1.csv", scenedata);
-	CreateCsvFile(&csvFile,"csv√÷Ω≈_18¿œ_1539.xlsx - Ω√∆Æ1.csv");
+	//CSVInit("Í≤åÏûÑÎ∂Å CSV - ÏãúÌä∏1.csv", scenedata);
+
+	CreateCsvFile(&csvFile,"csvÏµúÏã†_18Ïùº_1539.xlsx - ÏãúÌä∏1.csv");
 
 	Audio_LoadMusic(&backmusic, "index1.mp3");
 	//Audio_HookMusicFinished(logOnFinished);
@@ -59,120 +52,166 @@ void init_title(void)
 	playMusic = "index.mp3";
 	prevPlayMusic = "index.mp3";
 
-
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-	for (int32 i = 0; i < 10; ++i)
-	{
-		Text_CreateText(&data->GuideLine[i], "d2coding.ttf", 16, str[i], wcslen(str[i]));
-	}
 
-	data->FontSize = 24;
-	Text_CreateText(&data->TestText, "d2coding.ttf", data->FontSize, L"¿Ã ≈ÿΩ∫∆Æ∞° ∫Ø«’¥œ¥Ÿ.", 13);
+
+	data->FontSize = 50;
+	Text_CreateText(&data->Text2, "d2coding.ttf", data->FontSize, L"- G A M E S T A R T -", 21);
+	data->FontSize = 30;
+	Text_CreateText(&data->Text3, "d2coding.ttf", data->FontSize, L"PRESS - SPACE - BUTTON", 22);
 
 	data->RenderMode = SOLID;
 
-	Image_LoadImage(&data->TestImage, "Background.jfif");
+	Image_LoadImage(&data->index1, "index0.png");
 }
 
 void update_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
-	if (Input_GetKeyDown('B'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_BOLD);
-	}
 
-	if (Input_GetKeyDown('I'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_ITALIC);
-	}
+	data->FontSize = 50;
+	Text_CreateMoveText(&data->Text1, "d2coding.ttf", data->FontSize, L"T A K E N", 8, 0.5f);
 
-	if (Input_GetKeyDown('U'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_UNDERLINE);
-	}
 
-	if (Input_GetKeyDown('S'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_STRIKETHROUGH);
-	}
 
-	if (Input_GetKeyDown('N'))
-	{
-		Text_SetFontStyle(&data->TestText, FS_NORMAL);
-	}
+	Text_SetFontStyle(&data->Text1, FS_BOLD);
+	Text_SetFontStyle(&data->Text2, FS_BOLD);
+	Text_SetFontStyle(&data->Text3, FS_BOLD);
 
-	if (Input_GetKeyDown('C'))
-	{
-		data->RenderMode = (data->RenderMode + 1) % 3;
-	}
-
-	if (Input_GetKey('1'))
-	{
-		--data->FontSize;
-		Text_SetFont(&data->TestText, "d2coding.ttf", data->FontSize);
-	}
-
-	if (Input_GetKey('2'))
-	{
-		++data->FontSize;
-		Text_SetFont(&data->TestText, "d2coding.ttf", data->FontSize);
-	}
 
 	if (Input_GetKeyDown(VK_SPACE))
 	{
-		Scene_SetNextScene(SCENE_MAIN);
+		Scene_SetNextScene(SCENE_RULE);
 	}
 }
+bool canShow = 0;
 
 void render_title(void)
 {
+
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-	for (int32 i = 0; i < 10; ++i)
+	static float elapsedTime;
+	elapsedTime += Timer_GetDeltaTime();
+	Renderer_DrawImage(&data->index1, 0, 0);
+
+
+	SDL_Color foreColor = { .r = 255, .g = 255, .b = 255 };
+	SDL_Color backColor = { .a = 125 };
+	Renderer_DrawTextShaded(&data->Text1, 400, 100, foreColor, backColor);
+
+	if (elapsedTime >= 0.7f)
 	{
-		SDL_Color color = { .a = 255 };
-		Renderer_DrawTextSolid(&data->GuideLine[i], 10, 20 * i, color);
+
+		canShow = !canShow;
+		elapsedTime = 0.0f;
+
 	}
 
-	switch (data->RenderMode)
+	if (canShow == true)
 	{
-	case SOLID:
-	{
-		SDL_Color color = { .a = 255 };
-		Renderer_DrawTextSolid(&data->TestText, 400, 400, color);
+		SDL_Color foreColor = { .r = 255 };
+		SDL_Color backColor = { .a = 0 };
+		Renderer_DrawTextShaded(&data->Text2, 275, 500, foreColor, backColor);
+		Renderer_DrawTextShaded(&data->Text3, 375, 600, foreColor, backColor);
+
 	}
-	break;
-	case SHADED:
-	{
-		SDL_Color bg = { .a = 255 };
-		SDL_Color fg = { .r = 255, .g = 255, .a = 255 };
-		Renderer_DrawTextShaded(&data->TestText, 400, 400, fg, bg);
-	}
-	break;
-	case BLENDED:
-	{
-		Renderer_DrawImage(&data->TestImage, 400, 400);
-		SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
-		Renderer_DrawTextBlended(&data->TestText, 400, 400, color);
-	}
-	break;
-	}
+
+
+
 }
 
 void release_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
-	for (int32 i = 0; i < 10; ++i)
-	{
-		Text_FreeText(&data->GuideLine[i]);
-	}
-	Text_FreeText(&data->TestText);
 
-	Image_FreeImage(&data->TestImage);
+	Text_FreeText(&data->Text1);
+	Text_FreeText(&data->Text2);
+	Text_FreeText(&data->Text3);
 
 	SafeFree(g_Scene.Data);
+}
+#pragma endregion
+
+#pragma region ruleScene
+
+const wchar_t* ruleStr[] =
+{
+	L"Í≤å ÏûÑ Î∞© Î≤ï",
+	L"- ÏÑ†ÌÉùÏßÄÍ∞Ä ÏóÜÎäî Ïû•Î©¥ÏùÄ Ïä§ÌéòÏù¥Ïä§Î∞îÎ•º ÎàÑÎ•¥Î©¥ Ïû•Î©¥Ïù¥ ÎÑòÏñ¥Í∞ëÎãàÎã§.",
+	L"- ÏÑ†ÌÉùÏßÄÍ∞Ä ÏûàÎäî Ïû•Î©¥ÏùÄ Î∞©Ìñ•ÌÇ§ÏôÄ Ïä§ÌéòÏù¥Ïä§Î∞îÎ•º Ïù¥Ïö©ÌïòÏó¨ ÏÑ†ÌÉùÌï† Ïàò ÏûàÏäµÎãàÎã§.",
+};
+
+
+
+typedef struct RuleSceneData
+{
+	Text Text[TEXT_COUNT];
+	Image image;
+	int32 Alpha;
+	int32 ImageAlpha;
+
+} RuleSceneData;
+
+
+
+void init_rule(void)
+{
+	g_Scene.Data = malloc(sizeof(RuleSceneData));
+	memset(g_Scene.Data, 0, sizeof(RuleSceneData));
+
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+
+	Image_LoadImage(&data->image, "index0.png");
+	for (int32 i = 0; i < TEXT_COUNT; ++i)
+	{
+
+		Text_CreateText(&data->Text[i], "d2coding.ttf", 25, ruleStr[i], wcslen(ruleStr[i]));
+
+	}
+	data->Alpha = 0;
+	
+}
+void update_rule(void)
+{
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+	
+	
+	
+	if (Input_GetKeyDown(VK_SPACE))
+	{
+		Scene_SetNextScene(SCENE_MAIN);
+	}
+
+}
+
+void render_rule(void)
+{
+
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+	Image_FadeIn(&data->image, data->Alpha, 0, 255);
+	Renderer_DrawImage(&data->image, 0, 0);
+	
+	data->Alpha = Clamp(1, data->Alpha + 1, 255);// ÌéòÏù¥Îìú Ïù∏
+	Renderer_DrawTextFade(&data->Text[0], 10, 30, data->Alpha);
+	Renderer_DrawTextFade(&data->Text[1], 10, 600, data->Alpha);
+	Renderer_DrawTextFade(&data->Text[2], 10, 630, data->Alpha);
+
+
+
+}
+
+void release_rule(void)
+{
+
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+
+	Text_FreeText(&data->Text[0]);
+	Text_FreeText(&data->Text[1]);
+	Text_FreeText(&data->Text[2]);
+
+
 }
 #pragma endregion
 
@@ -421,6 +460,12 @@ void Scene_Change(void)
 		g_Scene.Update = update_title;
 		g_Scene.Render = render_title;
 		g_Scene.Release = release_title;
+		break;
+	case SCENE_RULE:
+		g_Scene.Init = init_rule;
+		g_Scene.Update = update_rule;
+		g_Scene.Render = render_rule;
+		g_Scene.Release = release_rule;
 		break;
 	case SCENE_MAIN:
 		g_Scene.Init = init_main;

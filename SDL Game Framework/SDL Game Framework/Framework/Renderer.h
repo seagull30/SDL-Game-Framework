@@ -1,61 +1,62 @@
 #pragma once
 
 /// <summary>
-/// ·»´õ·¯¸¦ ÃÊ±âÈ­ÇÑ´Ù.
+/// ë Œë”ëŸ¬ë¥¼ ì´ˆê¸°í™”í•œë‹¤.
 /// </summary>
-/// <return>ÃÊ±âÈ­¿¡ ¼º°øÇÏ¸é true, ¾Æ´Ï¸é false</return>
+/// <return>ì´ˆê¸°í™”ì— ì„±ê³µí•˜ë©´ true, ì•„ë‹ˆë©´ false</return>
 bool Renderer_Init(void);
 
 /// <summary>
-/// ·»´õ·¯¸¦ Á¤¸®ÇÑ´Ù.
+/// ë Œë”ëŸ¬ë¥¼ ì •ë¦¬í•œë‹¤.
 /// </summary>
 void Renderer_Cleanup(void);
 
 /// <summary>
-/// ¹é¹öÆÛ¿Í ÇÃ¸³ÇÑ´Ù.
+/// ë°±ë²„í¼ì™€ í”Œë¦½í•œë‹¤.
 /// </summary>
 void Renderer_Flip(void);
 
 /// <summary>
-/// ÀÌ¹ÌÁö¸¦ ±×¸°´Ù.
+/// ì´ë¯¸ì§€ë¥¼ ê·¸ë¦°ë‹¤.
 /// </summary>
-/// <param name="image">ÀÌ¹ÌÁö °´Ã¼</param>
-/// <param name="x">ÁÂÇ¥</param>
-/// <param name="y">ÁÂÇ¥</param>
+/// <param name="image">ì´ë¯¸ì§€ ê°ì²´</param>
+/// <param name="x">ì¢Œí‘œ</param>
+/// <param name="y">ì¢Œí‘œ</param>
 void Renderer_DrawImage(const struct Image* image, int32 x, int32 y);
 
 /// <summary>
-/// ÅØ½ºÆ®¸¦ Ãâ·ÂÇÑ´Ù. (¸ø»ı±è ÁÖÀÇ)
+/// í…ìŠ¤íŠ¸ë¥¼ ì¶œë ¥í•œë‹¤. (ëª»ìƒê¹€ ì£¼ì˜)
 /// </summary>
-/// <param name="text">ÅØ½ºÆ® °´Ã¼</param>
-/// <param name="x">ÁÂÇ¥</param>
-/// <param name="y">ÁÂÇ¥</param>
-/// <param name="color">±ÛÀÚÀÇ »ö±ò</param>
+/// <param name="text">í…ìŠ¤íŠ¸ ê°ì²´</param>
+/// <param name="x">ì¢Œí‘œ</param>
+/// <param name="y">ì¢Œí‘œ</param>
+/// <param name="color">ê¸€ìì˜ ìƒ‰ê¹”</param>
 void Renderer_DrawTextSolid(const struct Text* text, int32 x, int32 y, SDL_Color color);
 
 /// <summary>
-/// ÅØ½ºÆ®¸¦ Ãâ·ÂÇÑ´Ù. ¹è°æ»öÀÌ ÇÊ¿äÇÒ ¶§ »ç¿ëÇÑ´Ù.
+/// í…ìŠ¤íŠ¸ë¥¼ ì¶œë ¥í•œë‹¤. ë°°ê²½ìƒ‰ì´ í•„ìš”í•  ë•Œ ì‚¬ìš©í•œë‹¤.
 /// </summary>
-/// <param name="text">ÅØ½ºÆ® °´Ã¼</param>
-/// <param name="x">ÁÂÇ¥</param>
-/// <param name="y">ÁÂÇ¥</param>
-/// <param name="foreground">±ÛÀÚÀÇ »ö±ò</param>
-/// <param name="background">±ÛÀÚÀÇ ¹è°æ»ö</param>
+/// <param name="text">í…ìŠ¤íŠ¸ ê°ì²´</param>
+/// <param name="x">ì¢Œí‘œ</param>
+/// <param name="y">ì¢Œí‘œ</param>
+/// <param name="foreground">ê¸€ìì˜ ìƒ‰ê¹”</param>
+/// <param name="background">ê¸€ìì˜ ë°°ê²½ìƒ‰</param>
 void Renderer_DrawTextShaded(const struct Text* text, int32 x, int32 y, SDL_Color foreground, SDL_Color background);
 
 /// <summary>
-/// ÅØ½ºÆ®¸¦ Ãâ·ÂÇÑ´Ù. ÀÌ¹ÌÁö À§¿¡ Ãâ·ÂÇÒ ¶§ »ç¿ëÇÑ´Ù.
+/// í…ìŠ¤íŠ¸ë¥¼ ì¶œë ¥í•œë‹¤. ì´ë¯¸ì§€ ìœ„ì— ì¶œë ¥í•  ë•Œ ì‚¬ìš©í•œë‹¤.
 /// </summary>
-/// <param name="text">ÅØ½ºÆ® °´Ã¼</param>
-/// <param name="x">ÁÂÇ¥</param>
-/// <param name="y">ÁÂÇ¥</param>
-/// <param name="foreground">±ÛÀÚÀÇ »ö±ò</param>
+/// <param name="text">í…ìŠ¤íŠ¸ ê°ì²´</param>
+/// <param name="x">ì¢Œí‘œ</param>
+/// <param name="y">ì¢Œí‘œ</param>
+/// <param name="foreground">ê¸€ìì˜ ìƒ‰ê¹”</param>
 void Renderer_DrawTextBlended(const struct Text* text, int32 x, int32 y, SDL_Color foreground);
 
-
-
-
-
-
-
-
+/// <summary>
+/// í…ìŠ¤íŠ¸ì˜ ì•ŒíŒŒê°’ì„ ë°”ê¿”ì¤€ë‹¤.
+/// </summary>
+/// <param name="text">í…ìŠ¤íŠ¸ ê°ì²´</param>
+/// <param name="x">ì¢Œí‘œ</param>
+/// <param name="y">ì¢Œí‘œ</param>
+/// <param name="Alpha">í…ìŠ¤íŠ¸ ì•ŒíŒŒê°’</param>
+void Renderer_DrawTextFade(const struct Text* text, int32 x, int32 y, int32 Alpha);

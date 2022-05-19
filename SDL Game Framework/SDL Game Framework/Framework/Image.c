@@ -43,3 +43,37 @@ void Image_SetAlphaValue(Image* image, uint8 alpha)
 {
 	SDL_SetTextureAlphaMod(image->Texture, alpha);
 }
+
+#define IMAGE_COUNT 4
+int32 Count;
+void Image_Choice(const Image* image[IMAGE_COUNT])
+{
+	for (int i = 0; i < 3; i++)
+	{
+
+		if (Count == i)
+			Image_SetAlphaValue(image[i], 200);
+
+		else
+			Image_SetAlphaValue(image[i], 50);
+
+		Renderer_DrawImage(image[i], (i * 350) + 50, 300);
+	}
+
+}
+
+
+void Image_FadeIn(Image* image, int32 Alpha, int32 Min, int32 Max)
+{
+	Alpha = Clamp(Min, Alpha++, Max);
+	Image_SetAlphaValue(image, Alpha);
+}
+
+
+
+void Image_FadeOut(Image* image, int32 Alpha, int32 Min, int32 Max)
+{
+	Alpha = Clamp(Min, Alpha - 1, Max);
+	Image_SetAlphaValue(image, Alpha);
+}
+
