@@ -26,13 +26,30 @@ typedef struct TitleSceneData
 	Image	index1;
 
 } TitleSceneData;
+<<<<<<< Updated upstream
+=======
+const CsvFile csvFile;
+>>>>>>> Stashed changes
 
 void init_title(void)
 {
 	g_Scene.Data = malloc(sizeof(TitleSceneData));
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
+<<<<<<< Updated upstream
 
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
+=======
+	memset(&csvFile, 0, sizeof(CsvFile));
+	//CSVInit("게임북 CSV - 시트1.csv", scenedata);
+	CreateCsvFile(&csvFile, "csv최신_18일_1539.xlsx - 시트1.csv");
+	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
+
+
+	data->FontSize = 50;
+	Text_CreateText(&data->Text2, "d2coding.ttf", data->FontSize, L"- G A M E S T A R T -", 21);
+	data->FontSize = 30;
+	Text_CreateText(&data->Text3, "d2coding.ttf", data->FontSize, L"PRESS - SPACE - BUTTON", 22);
+>>>>>>> Stashed changes
 
 	
 	data->FontSize = 50;
@@ -53,11 +70,21 @@ void update_title(void)
 	data->FontSize = 50;
 	Text_CreateMoveText(&data->Text1, "d2coding.ttf", data->FontSize, L"T A K E N", 8, 0.5f);
 
+<<<<<<< Updated upstream
+=======
+
+	data->FontSize = 50;
+	Text_CreateMoveText(&data->Text1, "d2coding.ttf", data->FontSize, L"T A K E N", 8, 1.5f);
+
+>>>>>>> Stashed changes
 
 
 	Text_SetFontStyle(&data->Text1, FS_BOLD);
 	Text_SetFontStyle(&data->Text2, FS_BOLD);
 	Text_SetFontStyle(&data->Text3, FS_BOLD);
+<<<<<<< Updated upstream
+
+=======
 
 
 	if (Input_GetKeyDown(VK_SPACE))
@@ -69,6 +96,109 @@ bool canShow = 0;
 
 void render_title(void)
 {
+
+	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
+	static float elapsedTime;
+	elapsedTime += Timer_GetDeltaTime();
+	Renderer_DrawImage(&data->index1, 0, 0);
+
+
+	SDL_Color foreColor = { .r = 255, .g = 255, .b = 255 };
+	SDL_Color backColor = { .a = 125 };
+	Renderer_DrawTextShaded(&data->Text1, 400, 100, foreColor, backColor);
+
+	if (elapsedTime >= 0.7f)
+	{
+
+		canShow = !canShow;
+		elapsedTime = 0.0f;
+
+	}
+
+	if (canShow == true)
+	{
+		SDL_Color foreColor = { .r = 255 };
+		SDL_Color backColor = { .a = 0 };
+		Renderer_DrawTextShaded(&data->Text2, 275, 500, foreColor, backColor);
+		Renderer_DrawTextShaded(&data->Text3, 375, 600, foreColor, backColor);
+
+	}
+
+
+
+}
+
+void release_title(void)
+{
+	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
+
+
+	Text_FreeText(&data->Text1);
+	Text_FreeText(&data->Text2);
+	Text_FreeText(&data->Text3);
+
+	SafeFree(g_Scene.Data);
+}
+#pragma endregion
+
+#pragma region ruleScene
+
+int32		Count;//카운트 값
+#define TEXT_COUNT 3//문자열 카운트
+
+const wchar_t* ruleStr[] =
+{
+	L"게 임 방 법",
+	L"- 선택지가 없는 장면은 스페이스바를 누르면 장면이 넘어갑니다.",
+	L"- 선택지가 있는 장면은 방향키와 스페이스바를 이용하여 선택할 수 있습니다.",
+};
+
+
+
+typedef struct RuleSceneData
+{
+	Text Text[TEXT_COUNT];
+	Image image;
+	int32 Alpha;
+
+} RuleSceneData;
+
+
+
+void init_rule(void)
+{
+	g_Scene.Data = malloc(sizeof(RuleSceneData));
+	memset(g_Scene.Data, 0, sizeof(RuleSceneData));
+
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+
+	Image_LoadImage(&data->image, "index0.png");
+	for (int32 i = 0; i < TEXT_COUNT; ++i)
+	{
+
+		Text_CreateText(&data->Text[i], "d2coding.ttf", 25, ruleStr[i], wcslen(ruleStr[i]));
+
+	}
+	data->Alpha = 0;
+
+}
+
+void update_rule(void)
+{
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+>>>>>>> Stashed changes
+
+	if (Input_GetKeyDown(VK_SPACE))
+	{
+		Scene_SetNextScene(SCENE_RULE);
+	}
+
+}
+bool canShow = 0;
+
+void render_rule(void)
+{
+<<<<<<< Updated upstream
 	
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 	static float elapsedTime;
@@ -99,18 +229,38 @@ void render_title(void)
 		
 
 		
+=======
+
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+	Renderer_DrawImage(&data->image, 0, 0);
+
+	data->Alpha = Clamp(1, data->Alpha + 1, 255);// 페이드 인
+	Renderer_DrawTextFade(&data->Text[0], 10, 30, data->Alpha);
+	Renderer_DrawTextFade(&data->Text[1], 10, 600, data->Alpha);
+	Renderer_DrawTextFade(&data->Text[2], 10, 630, data->Alpha);
+
+
+
+>>>>>>> Stashed changes
 }
 
-void release_title(void)
+void release_rule(void)
 {
-	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
+<<<<<<< Updated upstream
 
 	Text_FreeText(&data->Text1);
 	Text_FreeText(&data->Text2);
 	Text_FreeText(&data->Text3);
+=======
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
 
-	SafeFree(g_Scene.Data);
+	Text_FreeText(&data->Text[0]);
+	Text_FreeText(&data->Text[1]);
+	Text_FreeText(&data->Text[2]);
+
+>>>>>>> Stashed changes
+
 }
 #pragma endregion
 

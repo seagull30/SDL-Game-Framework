@@ -76,6 +76,7 @@ void Renderer_DrawTextBlended(const Text* text, int x, int y, SDL_Color foregrou
 	SDL_RenderCopy(g_App.Renderer, texture, NULL, &rect);
 
 	SDL_FreeSurface(surface);
+<<<<<<< Updated upstream
 }
 
 
@@ -83,6 +84,15 @@ void Renderer_DrawTextFade(const Text* text, int32 x, int32 y, int32 Alpha)
 {
 	
 	SDL_Color color = {255, 255, 255, Alpha};
+=======
+	SDL_DestroyTexture(texture);
+}
+
+void Renderer_DrawTextFade(const Text* text, int32 x, int32 y, int32 Alpha)
+{
+
+	SDL_Color color = { 255, 255, 255, Alpha };
+>>>>>>> Stashed changes
 	SDL_Surface* surface = TTF_RenderUNICODE_Solid(text->Font, text->String, color);
 	SDL_Texture* texture = SDL_CreateTextureFromSurface(g_App.Renderer, surface);
 	SDL_Rect rect = { .x = x, .y = y };
@@ -91,6 +101,7 @@ void Renderer_DrawTextFade(const Text* text, int32 x, int32 y, int32 Alpha)
 
 	SDL_FreeSurface(surface);
 }
+<<<<<<< Updated upstream
 
 
 
@@ -102,3 +113,5 @@ void Renderer_DrawRect(int32 x, int32 y, int32 w, int32 h)
 }
 
 
+=======
+>>>>>>> Stashed changes

@@ -44,4 +44,28 @@ void Image_FreeImage(Image* image);
 /// <param name="alpha">파일 이름</param>
 void Image_SetAlphaValue(Image* image, uint8 alpha);
 
+<<<<<<< Updated upstream
 void Image_Choice(Image* image[], int32 Count);
+=======
+void Image_Choice(Image* image[]);//이미지 선택지 미완성
+
+/// <summary>
+/// 이미지를 페이드인 한다
+/// </summary>
+/// <param name="image">이미지 객체</param>
+/// <param name="Alpha">알파값</param>
+/// <param name="Min">알파 최소값</param>
+/// <param name="Max">알파 최댓값</param>
+void Image_FadeIn(const Image* image, int32 Alpha, int32 Min, int32 Max);
+
+/// <summary>
+/// 이미지를 페이드아웃 한다
+/// </summary>
+/// <param name="image">이미지 객체</param>
+/// <param name="Alpha">알파값</param>
+/// <param name="Min">알파 최소값</param>
+/// <param name="Max">알파 최댓값</param>
+void Image_FadeOut(const Image* image, int32 Alpha, int32 Min, int32 Max);
+
+
+>>>>>>> Stashed changes

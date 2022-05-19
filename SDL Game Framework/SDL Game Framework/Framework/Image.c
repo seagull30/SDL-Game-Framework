@@ -41,6 +41,7 @@ void Image_SetAlphaValue(Image* image, uint8 alpha)
 #define IMAGE_COUNT 4
 void Image_Choice(const Image* image, int32 Count)
 {
+<<<<<<< Updated upstream
 	for (int32 i = 0; i <= IMAGE_COUNT; i++)
 	{
 		
@@ -52,8 +53,43 @@ void Image_Choice(const Image* image, int32 Count)
 
 		Renderer_DrawImage(image[i], (i * 350) + 50, 300);
 
+=======
+	SDL_SetTextureAlphaMod(image->Texture, alpha);
+}
+
+#define IMAGE_COUNT 4
+int32 Count;
+void Image_Choice(const Image* image[IMAGE_COUNT])//이미지 선택지 (미완성)
+{
+	for (int i = 0; i < 3; i++)
+	{
+
+		if (Count == i)
+			Image_SetAlphaValue(image[i], 200);
+
+		else
+			Image_SetAlphaValue(image[i], 50);
+
+		Renderer_DrawImage(image[i], (i * 350) + 50, 300);
+>>>>>>> Stashed changes
 	}
 
 }
 
 
+<<<<<<< Updated upstream
+=======
+void Image_FadeIn(Image* image, int32 Alpha, int32 Min, int32 Max)
+{
+	Alpha = Clamp(Min, Alpha++, Max);
+	Image_SetAlphaValue(image, Alpha);
+}
+
+
+
+void Image_FadeOut(Image* image, int32 Alpha, int32 Min, int32 Max)
+{
+	Alpha = Clamp(Min, Alpha - 1, Max);
+	Image_SetAlphaValue(image, Alpha);
+}
+>>>>>>> Stashed changes
