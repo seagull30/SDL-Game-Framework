@@ -38,6 +38,17 @@ void Text_Cleanup(void);
 void Text_CreateText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length);
 
 /// <summary>
+/// 한글자씩 출력되는 텍스트
+/// </summary>
+/// <param name="text">텍스트 객체</param>
+/// <param name="fontFile">폰트 파일</param>
+/// <param name="fontSize">글자 크기</param>
+/// <param name="str">유니코드 문자열</param>
+/// <param name="length">텍스트 길이</param>
+/// <param name="timer">출력 시간</param>
+void Text_CreateMoveText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length, static float timer);
+
+/// <summary>
 /// 텍스트와 관련된 자원을 반납한다. Release()에서 반드시 호출해주자.
 /// </summary>
 /// <param name="text">텍스트 객체</param>
@@ -65,4 +76,4 @@ void Text_SetFontStyle(Text* text, EFontStyle style);
 /// <returns>폰트 스타일</returns>
 EFontStyle Text_GetFontStyle(const Text* text);
 
-void Text_LoadText(Text* text, const char* filename);
+void Text_TextChoice(const Text* text, int32 Count);

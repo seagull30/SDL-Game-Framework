@@ -4,6 +4,7 @@
 
 #define IS_KEY_DOWN(vkey) (0x8000 & GetAsyncKeyState(vkey))
 
+
 bool s_isKeyDownOnPrevFrame[256];
 bool s_isKeyDownOnCurrentFrame[256];
 
@@ -59,4 +60,19 @@ bool Input_GetKey(uint8 vkey)
 	{
 		return false;
 	}
+}
+
+int32 Count = 0;
+
+void Input_Choice(uint8 vkey, uint8 vkey2)
+{
+	if (Input_GetKeyDown(vkey) && Count >= 1)
+	{
+		return Count--;
+	}
+	if (Input_GetKeyDown(vkey2) && Count < 2)
+	{
+		return Count++;
+	}
+
 }

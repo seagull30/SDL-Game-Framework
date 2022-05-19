@@ -9,6 +9,7 @@ typedef struct Image
 	int32				Height;
 	float				ScaleX;
 	float				ScaleY;
+
 } Image;
 
 /// <summary>
@@ -29,6 +30,7 @@ void Image_Cleanup(void);
 /// <param name="filename">파일 이름</param>
 void Image_LoadImage(Image* image, const char* filename);
 
+
 /// <summary>
 /// 이미지 관련 자원을 반환한다. Release시 반드시 출력하자.
 /// </summary>
@@ -41,3 +43,5 @@ void Image_FreeImage(Image* image);
 /// <param name="image">이미지 객체</param>
 /// <param name="alpha">파일 이름</param>
 void Image_SetAlphaValue(Image* image, uint8 alpha);
+
+void Image_Choice(Image* image[], int32 Count);

@@ -44,6 +44,15 @@ void Renderer_DrawTextSolid(const struct Text* text, int32 x, int32 y, SDL_Color
 void Renderer_DrawTextShaded(const struct Text* text, int32 x, int32 y, SDL_Color foreground, SDL_Color background);
 
 /// <summary>
+/// 텍스트의 알파값을 바꿔준다.
+/// </summary>
+/// <param name="text">텍스트 객체</param>
+/// <param name="x">좌표</param>
+/// <param name="y">좌표</param>
+/// <param name="Alpha">텍스트 알파값</param>
+void Renderer_DrawTextFade(const struct Text* text, int32 x, int32 y, int32 Alpha);
+
+/// <summary>
 /// 텍스트를 출력한다. 이미지 위에 출력할 때 사용한다.
 /// </summary>
 /// <param name="text">텍스트 객체</param>
@@ -51,3 +60,5 @@ void Renderer_DrawTextShaded(const struct Text* text, int32 x, int32 y, SDL_Colo
 /// <param name="y">좌표</param>
 /// <param name="foreground">글자의 색깔</param>
 void Renderer_DrawTextBlended(const struct Text* text, int32 x, int32 y, SDL_Color foreground);
+
+

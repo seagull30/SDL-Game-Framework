@@ -1,7 +1,10 @@
 #include "stdafx.h"
 #include "Text.h"
+#include "Timer.h"
 
 static char s_path[MAX_PATH];
+
+
 
 bool Text_Init(void)
 {
@@ -20,17 +23,42 @@ void Text_Cleanup(void)
 
 void Text_CreateText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length)
 {
+	
 	Text_SetFont(text, fontFile, fontSize);
 	
 	text->String = malloc(sizeof(wchar_t) * (length + 1));
-	for (int32 i = 0; i < length; ++i)
-	{
-		(text->String)[i] = str[i];
-	}
-	(text->String)[length] = L'\0';
+
+		for (int32 i = 0; i < length; ++i)
+		{
+			(text->String)[i] = str[i];
+		}
+
+ 	(text->String)[length] = L'\0';
 	
-	text->Length = length;
+ 	text->Length = length;
 }
+
+
+void Text_CreateMoveText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length, static float timer)
+{
+	static int32 i = 1;
+	static float elapsedTime;
+	elapsedTime += Timer_GetDeltaTime();
+		if (elapsedTime >= timer)
+		{
+
+			if (i < length + 1)
+				i++;
+			Text_CreateText(text, fontFile, fontSize, str, i);
+			elapsedTime = 0.0f;
+
+			if (i > length + 3)
+				i = 0;
+		}
+
+}
+
+
 
 void Text_FreeText(Text* text)
 {
@@ -64,33 +92,26 @@ EFontStyle Text_GetFontStyle(const Text* text)
 	return (EFontStyle)TTF_GetFontStyle(text->Font);
 }
 
+#define TEXT_COUNT 3
 
-
-void Text_LoadText(Text* text, const char* filename)
+void Text_TextChoice(const Text* text, int32 Count)
 {
-	
-	LogInfo("Text Loading... %s", filename);
-
-	static char path[MAX_PATH];
-
-	sprintf_s(path, sizeof(path), "%s/%s", TEXT_DIRECTORY, filename);
-	
-	FILE* p_file = NULL;
-	wchar_t str[256];
-	if (0 == fopen_s(&p_file, path, "r,ccs=UTF-8"))
+	for (int32 i = 0; i < TEXT_COUNT; ++i)
 	{
 
-		while (NULL != fgetws(str, 256, p_file))
+		if (i == Count)
 		{
-			int32 strlen = wcslen(str);
-			if(str[strlen-1]=='\n')
-				Text_CreateText(text, "d2coding.ttf", 16, str, strlen-1);
-			else
-				Text_CreateText(text, "d2coding.ttf", 16, str, strlen);
-			++text;
+			SDL_Color foreColor = { .r = 255, .g = 255, .b = 255 };
+			SDL_Color backColor = { .r = 255, .a = 125 };
+			Renderer_DrawTextShaded(text[i], 10, 30 * i, foreColor, backColor);
 		}
-		
+		else
+		{
+			SDL_Color foreColor = { .r = 255, .g = 255, .b = 255 };
+			SDL_Color backColor = { .a = 125 };
+			Renderer_DrawTextShaded(text[i], 10, 30 * i, foreColor, backColor);
+		}
+
 	}
 }
-
 

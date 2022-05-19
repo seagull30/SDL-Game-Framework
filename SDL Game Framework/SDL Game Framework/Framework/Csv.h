@@ -13,7 +13,7 @@ typedef struct CsvFile
 {
 	int32		ColumnCount;
 	int32		RowCount;
-	CsvItem* Items[MAXIMUM_ROW];
+	CsvItem*	Items[MAXIMUM_ROW];
 } CsvFile;
 
 /// <summary>
@@ -41,11 +41,11 @@ int32		ParseToInt(const CsvItem item);
 /// </summary>
 /// <param name="item">레코드</param>
 /// <returns></returns>
-char* ParseToAscii(const CsvItem item);
+char*		ParseToAscii(const CsvItem item);
 
 /// <summary>
 /// 레코드를 유니코드 문자열로 가져온다.
 /// </summary>
 /// <param name="item">레코드</param>
 /// <returns></returns>
-wchar_t* ParseToUnicode(const CsvItem item);
+wchar_t*	ParseToUnicode(const CsvItem item);
