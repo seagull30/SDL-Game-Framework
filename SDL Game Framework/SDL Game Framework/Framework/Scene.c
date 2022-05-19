@@ -5,8 +5,8 @@
 
 Scene g_Scene;
 
-int32		Count;//Ä«¿îÆ® °ª
-#define TEXT_COUNT 3//¹®ÀÚ¿­ Ä«¿îÆ®
+int32		Count;//ì¹´ìš´íŠ¸ ê°’
+#define TEXT_COUNT 3//ë¬¸ìžì—´ ì¹´ìš´íŠ¸
 
 static ESceneType s_nextScene = SCENE_NULL;
 #define _MAX_SINEN_NUM 100
@@ -33,13 +33,25 @@ typedef struct TitleSceneData
 } TitleSceneData;
 
 
+Music backmusic;
+char* prevPlayMusic;
+char* playMusic;
+
 void init_title(void)
 {
 	g_Scene.Data = malloc(sizeof(TitleSceneData));
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
 	memset(&csvFile, 0, sizeof(CsvFile));
-	//CSVInit("°ÔÀÓºÏ CSV - ½ÃÆ®1.csv", scenedata);
-	CreateCsvFile(&csvFile, "csvÃÖ½Å_18ÀÏ_1539.xlsx - ½ÃÆ®1.csv");
+	//CSVInit("ê²Œìž„ë¶ CSV - ì‹œíŠ¸1.csv", scenedata);
+
+	CreateCsvFile(&csvFile,"csvìµœì‹ _18ì¼_1539.xlsx - ì‹œíŠ¸1.csv");
+
+	Audio_LoadMusic(&backmusic, "index1.mp3");
+	//Audio_HookMusicFinished(logOnFinished);
+	Audio_PlayFadeIn(&backmusic, INFINITY_LOOP, 3000);
+	playMusic = "index.mp3";
+	prevPlayMusic = "index.mp3";
+
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
 
@@ -126,9 +138,9 @@ void release_title(void)
 
 const wchar_t* ruleStr[] =
 {
-	L"°Ô ÀÓ ¹æ ¹ý",
-	L"- ¼±ÅÃÁö°¡ ¾ø´Â Àå¸éÀº ½ºÆäÀÌ½º¹Ù¸¦ ´©¸£¸é Àå¸éÀÌ ³Ñ¾î°©´Ï´Ù.",
-	L"- ¼±ÅÃÁö°¡ ÀÖ´Â Àå¸éÀº ¹æÇâÅ°¿Í ½ºÆäÀÌ½º¹Ù¸¦ ÀÌ¿ëÇÏ¿© ¼±ÅÃÇÒ ¼ö ÀÖ½À´Ï´Ù.",
+	L"ê²Œ ìž„ ë°© ë²•",
+	L"- ì„ íƒì§€ê°€ ì—†ëŠ” ìž¥ë©´ì€ ìŠ¤íŽ˜ì´ìŠ¤ë°”ë¥¼ ëˆ„ë¥´ë©´ ìž¥ë©´ì´ ë„˜ì–´ê°‘ë‹ˆë‹¤.",
+	L"- ì„ íƒì§€ê°€ ìžˆëŠ” ìž¥ë©´ì€ ë°©í–¥í‚¤ì™€ ìŠ¤íŽ˜ì´ìŠ¤ë°”ë¥¼ ì´ìš©í•˜ì—¬ ì„ íƒí•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
 };
 
 
@@ -181,7 +193,7 @@ void render_rule(void)
 	Image_FadeIn(&data->image, data->Alpha, 0, 255);
 	Renderer_DrawImage(&data->image, 0, 0);
 	
-	data->Alpha = Clamp(1, data->Alpha + 1, 255);// ÆäÀÌµå ÀÎ
+	data->Alpha = Clamp(1, data->Alpha + 1, 255);// íŽ˜ì´ë“œ ì¸
 	Renderer_DrawTextFade(&data->Text[0], 10, 30, data->Alpha);
 	Renderer_DrawTextFade(&data->Text[1], 10, 600, data->Alpha);
 	Renderer_DrawTextFade(&data->Text[2], 10, 630, data->Alpha);
@@ -204,34 +216,6 @@ void release_rule(void)
 #pragma endregion
 
 #pragma region MainScene
-const wchar_t* str2[] = {
-	L"¿©±â¼­´Â »ç¿îµå¿Í ÀÌ¹ÌÁö ºí·»µù¿¡ ´ëÇØ¼­ ¾Ë¾Æº¾½Ã´Ù.",
-	L"È­»ìÇ¥Å°·Î ÀÌ¹ÌÁö¸¦ ÀÌµ¿½ÃÅ³ ¼ö ÀÖ½À´Ï´Ù.",
-	L"EÅ°¸¦ ´©¸£¸é ÀÌÆåÆ®¸¦ Àç»ý½ÃÅ³ ¼ö ÀÖ½À´Ï´Ù. ÀÌÆåÆ® ¼Ò¸®°¡ ÀÛÀ¸´Ï º¼·ýÀ» ³·Ãá ÈÄ ÁøÇàÇÏ¼¼¿ä.",
-	L"MÅ°·Î À½¾ÇÀ» ²ô°Å³ª ÄÓ ¼ö ÀÖ½À´Ï´Ù.",
-	L"PÅ°·Î À½¾ÇÀ» ¸ØÃß°Å³ª Àç°³ÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-	L"1¹ø°ú 2¹øÀ¸·Î º¼·ýÀ» Á¶ÀýÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-	L"WASD·Î ÀÌ¹ÌÁöÀÇ ½ºÄÉÀÏÀ» Á¶Á¤ÇÒ ¼ö ÀÖ½À´Ï´Ù.",
-	L"KLÅ°·Î ÀÌ¹ÌÁöÀÇ Åõ¸íµµ¸¦ Á¶ÀýÇÒ ¼ö ÀÖ½À´Ï´Ù."
-};
-
-#define GUIDELINE_COUNT 8
-
-//typedef struct MainSceneData
-//{
-//	Text		GuideLine[GUIDELINE_COUNT];
-//	Music		BGM;
-//	float		Volume;
-//	SoundEffect Effect;
-//	Image		BackGround;
-//	float		Speed;
-//	int32		X;
-//	int32		Y;
-//	int32		Alpha;
-//} MainSceneData;
-
-
-
 
 void logOnFinished(void)
 {
@@ -246,13 +230,14 @@ typedef struct MainSceneData
 {
 	int32		index;
 	Music		BGM;
+	char*		playMusic;
 	float		Volume;
 	Image		BackGround;
 	int32		BackGroundX;
 	int32		BackGroundY;
 	int32		imageEffect;
 	int32		textTime;
-	int32		temp;
+	int32		textSpeed;
 	int32		text1X;
 	int32		text1Y;
 	Text		text1;
@@ -263,38 +248,84 @@ typedef struct MainSceneData
 	int32		text3Y;
 	Text		text3[5];
 	Text		select1;
-	int32		select1Value;
 	Text		select2;
-	int32		select2Value;
 	Text		select3;
-	int32		select3Value;
+	int32		selectCount;
+	int32		selectValue[3];
 	int32		playerSelectValue;
 } MainSceneData;
 
+typedef enum mainSceneDataNumber
+{
+index,
+BGMFileName,
+BackGroundFileName,
+imageTime,
+imageEffect,
+textTime,
+textSpeed,
+textEffect,
+textFileName1,
+//text1x,
+//text1y,
+textFileName2,
+//text2x,
+//text2y,
+textFileName3,
+//text3x,
+//text3y,
+select1,
+select1Value,
+select2,
+select2Value,
+select3,
+select3Value
+} mainSceneDataNumber;
+
 static int32 sceneNum = 3;
 static int32 prevSceneNum = 1;
-
+Music backmusic;
+char* prevPlayMusic = "index.mp3";
+char* playMusic = "index.mp3";
 void init_main(void)
 {
 	g_Scene.Data = malloc(sizeof(MainSceneData));
 	memset(g_Scene.Data, 0, (sizeof(MainSceneData)));
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
 
+	
 
-
-	data->index = ParseToInt(csvFile.Items[sceneNum][0]);
-	Audio_LoadMusic(&data->BGM, ParseToAscii(csvFile.Items[sceneNum][1]));
-	Audio_HookMusicFinished(logOnFinished);
-	Audio_PlayFadeIn(&data->BGM, INFINITY_LOOP, 3000);
-	Image_LoadImage(&data->BackGround, ParseToAscii(csvFile.Items[sceneNum][2]));
-	data->select1Value = ParseToInt(csvFile.Items[sceneNum][13]);
-	data->select2Value = ParseToInt(csvFile.Items[sceneNum][15]);
-	data->select3Value = ParseToInt(csvFile.Items[sceneNum][17]);
-	Text_LoadText(&data->text1, ParseToAscii(csvFile.Items[sceneNum][9]));
-	Text_LoadText(&data->text2, ParseToAscii(csvFile.Items[sceneNum][10]));
-	Text_LoadText(&data->text3, ParseToAscii(csvFile.Items[sceneNum][11]));
+	data->index = ParseToInt(csvFile.Items[sceneNum][index]);
+	//if (playMusic != ParseToAscii(csvFile.Items[sceneNum][BackGroundFileName]))
+	//{
+	//	Audio_LoadMusic(&backmusic, ParseToAscii(csvFile.Items[sceneNum][BGMFileName]));
+	//	playMusic =
+	//}
+	//Audio_HookMusicFinished(logOnFinished);
+	//Audio_PlayFadeIn(&data->BGM, INFINITY_LOOP, 3000);
+	Image_LoadImage(&data->BackGround, ParseToAscii(csvFile.Items[sceneNum][BackGroundFileName]));
+	data->selectCount = 0;
+	for (int i = 0; i < 3; ++i)
+	{
+		int32 check = ParseToInt(csvFile.Items[sceneNum][select1Value]);
+		if (check != 0)
+		{
+			data->selectValue[i] = check;
+			++data->selectCount;
+		}
+	}
+	
+	Text_LoadText(&data->text1, ParseToAscii(csvFile.Items[sceneNum][textFileName1]));
+	Text_LoadText(&data->text2, ParseToAscii(csvFile.Items[sceneNum][textFileName2]));
+	Text_LoadText(&data->text3, ParseToAscii(csvFile.Items[sceneNum][textFileName3]));
 
 	data->Volume = 1.0f;
+	//data->text1X = ParseToInt(csvFile.Items[sceneNum][text1x]);
+	//data->text1Y = ParseToInt(csvFile.Items[sceneNum][text1y]);
+	//data->text2X = ParseToInt(csvFile.Items[sceneNum][text2x]);
+	//data->text2Y = ParseToInt(csvFile.Items[sceneNum][text2y]);
+	//data->text3X = ParseToInt(csvFile.Items[sceneNum][text3x]);
+	//data->text3Y = ParseToInt(csvFile.Items[sceneNum][text3y]);
 	
 	data->BackGroundX = 0;
 	data->BackGroundY = 0;
@@ -330,23 +361,32 @@ void update_main(void)
 		}
 	}
 	
-	if (Input_GetKeyDown('1'))
+	if (Input_GetKeyDown(VK_SPACE))
 	{
+	
 		prevSceneNum = sceneNum;
-		sceneNum = data->select1Value;
+		sceneNum = data->selectValue[data->playerSelectValue];
 		Scene_SetNextScene(SCENE_MAIN);
 	}
 
-	if (Input_GetKey('W'))
+	if (Input_GetKeyDown('W'))
 	{
-		--data->playerSelectValue;
+		if (data->playerSelectValue > 1)
+			--data->playerSelectValue;
 	}
 	
-	if (Input_GetKey('S'))
+	if (Input_GetKeyDown('S'))
 	{
-		++data->playerSelectValue;
+		if (data->playerSelectValue < data->selectCount)
+			++data->playerSelectValue;
 	}
-	
+
+	if (Input_GetKeyDown(VK_BACK))
+	{
+		sceneNum = prevSceneNum;
+		
+		Scene_SetNextScene(SCENE_MAIN);
+	}
 }
 
 void render_main(void)
@@ -356,15 +396,15 @@ void render_main(void)
 	Renderer_DrawImage(&data->BackGround, data->BackGroundX, data->BackGroundY);
 
 	SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
-	Renderer_DrawTextSolid(&data->text1, 0, 0, color);
+	Renderer_DrawTextSolid(&data->text1, 11,12, color);
 	for (int i = 0; i < 5; ++i)
 	{
-		Renderer_DrawTextSolid(&data->text2[i], 0, 30 * (i + 1), color);
+		Renderer_DrawTextSolid(&data->text2[i], data->text2X, data->text2Y * (i + 1), color);
 
 	}
 	for (int i = 0; i < 5; ++i)
 	{
-		Renderer_DrawTextSolid(&data->text3[i], 0, 50 + (15 * (i + 1)), color);
+		Renderer_DrawTextSolid(&data->text3[i], 291, 600 + (20 * (i + 1)), color);
 
 	}
 
