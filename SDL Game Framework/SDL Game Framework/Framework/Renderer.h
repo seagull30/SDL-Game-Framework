@@ -51,3 +51,11 @@ void Renderer_DrawTextShaded(const struct Text* text, int32 x, int32 y, SDL_Colo
 /// <param name="y">ÁÂÇ¥</param>
 /// <param name="foreground">±ÛÀÚÀÇ »ö±ò</param>
 void Renderer_DrawTextBlended(const struct Text* text, int32 x, int32 y, SDL_Color foreground);
+
+
+
+
+
+
+
+
