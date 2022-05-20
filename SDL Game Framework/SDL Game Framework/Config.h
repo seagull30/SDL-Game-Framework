@@ -20,3 +20,21 @@
 #define CLEAR_COLOR_G	255
 #define CLEAR_COLOR_B	255
 #define CLEAR_COLOR_A	255
+
+
+
+#define TEXT1_FONT "aB.ttf"
+#define TEXT1_FONT_SIZE 23 * ONE_POINT_FIVE
+#define TEXT1_POS_X 11
+#define TEXT1_POS_Y 50
+
+#define TEXT2_FONT TEXT1_FONT
+#define TEXT2_FONT_SIZE 26* ONE_POINT_FIVE
+#define TEXT2_POS_X 960
+#define TEXT2_POS_Y 850
+
+#define TEXT3_FONT "aL.ttf"
+#define TEXT3_POS_X TEXT2_POS_X
+#define TEXT3_POS_Y 930
+
+#define ONE_POINT_FIVE	1.5
