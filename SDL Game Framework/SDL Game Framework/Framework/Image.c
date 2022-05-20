@@ -63,12 +63,13 @@ void Image_Choice(const Image* image[IMAGE_COUNT])
 }
 
 
-void Image_FadeIn(Image* image, int32 Alpha, int32 Min, int32 Max)
-{
-	Alpha = Clamp(Min, Alpha++, Max);
-	Image_SetAlphaValue(image, Alpha);
-}
 
+void Image_FadedIn(Image* image, int32 Alpha)
+{
+	
+	
+	SDL_SetTextureAlphaMod(image->Texture, Alpha);
+}
 
 
 void Image_FadeOut(Image* image, int32 Alpha, int32 Min, int32 Max)
