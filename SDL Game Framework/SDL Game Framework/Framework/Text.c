@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Text.h"
-
+#include "Input.h"
+#include "Scene.h"
 static char s_path[MAX_PATH];
 
 bool Text_Init(void)
@@ -64,7 +65,45 @@ EFontStyle Text_GetFontStyle(const Text* text)
 	return (EFontStyle)TTF_GetFontStyle(text->Font);
 }
 
+bool Text_MoveOn(void)
+{
+	static float elapsedTime;
+	elapsedTime += Timer_GetDeltaTime();
+	if (elapsedTime > 100.0f)
+	{
+		
+		if (Input_GetKeyDown(VK_ESCAPE))
+			elapsedTime = 0.0f;
+			return false;
+			
+	}
+	else
+		return true;
 
+}
+
+void Text_CreateMoveText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length, static float timer)
+{
+	if (Text_MoveOn() == true)
+	{
+		static int32 i = 1;
+		static float elapsedTime;
+		elapsedTime += Timer_GetDeltaTime();
+		if (elapsedTime >= timer)
+		{
+
+			if (i < length + 1)
+				i++;
+			Text_CreateText(text, fontFile, fontSize, str, i);
+			elapsedTime = 0.0f;
+
+			if (i > length + 1)
+				i = 0;
+		}
+
+	}
+
+}
 
 void Text_LoadText(Text* text, const char* filename)
 {
@@ -77,41 +116,26 @@ void Text_LoadText(Text* text, const char* filename)
 	
 	FILE* p_file = NULL;
 	wchar_t str[256];
-	if (0 == fopen_s(&p_file, path, "r,ccs=UTF-8"))
-	{
-
-		while (NULL != fgetws(str, 256, p_file))
+	int32 strlen = wcslen(str);
+		if (0 == fopen_s(&p_file, path, "r,ccs=UTF-8"))
 		{
-			int32 strlen = wcslen(str);
-			if(str[strlen-1]=='\n')
-				Text_CreateText(text, "d2coding.ttf", 16, str, strlen-1);
-			else
-				Text_CreateText(text, "d2coding.ttf", 16, str, strlen);
-			++text;
+
+			while (NULL != fgetws(str, 256, p_file))
+			{
+				
+				if (str[strlen - 1] == '\n')
+					Text_CreateText(text, "d2coding.ttf", 16, str, strlen - 1);//Text_CreateMoveText ·Î º¯°æ.
+				else
+					Text_CreateText(text, "d2coding.ttf", 16, str, strlen);
+				++text;
+			}
+
 		}
-		
-	}
+	
 }
 
 
-void Text_CreateMoveText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length, static float timer)
-{
-	static int32 i = 1;
-	static float elapsedTime;
-	elapsedTime += Timer_GetDeltaTime();
-	if (elapsedTime >= timer)
-	{
 
-		if (i < length + 1)
-			i++;
-		Text_CreateText(text, fontFile, fontSize, str, i);
-		elapsedTime = 0.0f;
-
-		if (i > length + 3)
-			i = 0;
-	}
-
-}
 
 #define TEXT_COUNT 3
 

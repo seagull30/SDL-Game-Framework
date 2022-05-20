@@ -80,3 +80,5 @@ void Text_LoadText(Text* text, const char* filename);
 void Text_CreateMoveText(Text* text, const char* fontFile, int32 fontSize, const wchar_t* str, int32 length, static float timer);
 
 void Text_TextChoice(const Text* text, int32 Count);
+
+bool Text_MoveOn(void);

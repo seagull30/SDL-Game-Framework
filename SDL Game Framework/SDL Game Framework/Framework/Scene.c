@@ -4,7 +4,9 @@
 #include "Framework.h"
 
 
+
 Scene g_Scene;
+
 
 static ESceneType s_nextScene = SCENE_NULL;
 #define _MAX_SINEN_NUM 100
@@ -26,7 +28,8 @@ typedef struct TitleSceneData
 	Text	Text3;
 	int32	FontSize;
 	int32	RenderMode;
-	Image	index1;
+	Image	image1;
+	Image	image2;
 
 } TitleSceneData;
 
@@ -40,9 +43,9 @@ void init_title(void)
 	g_Scene.Data = malloc(sizeof(TitleSceneData));
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
 	memset(&csvFile, 0, sizeof(CsvFile));
-	//CSVInit("���Ӻ� CSV - ��Ʈ1.csv", scenedata);
+	//CSVInit("게임북 CSV - 시트1.csv", scenedata);
 	
- 	CreateCsvFile(&csvFile,"���Ӻ� CSV0 (1).csv");
+ 	CreateCsvFile(&csvFile,"게임북 CSV0 (1).csv");
 
 	Audio_LoadMusic(&backmusic, "index1.mp3");
 	//Audio_HookMusicFinished(logOnFinished);
@@ -52,27 +55,15 @@ void init_title(void)
 
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
-
-	data->FontSize = 50;
-	Text_CreateText(&data->Text2, "d2coding.ttf", data->FontSize, L"- G A M E S T A R T -", 21);
-	data->FontSize = 30;
-	Text_CreateText(&data->Text3, "d2coding.ttf", data->FontSize, L"PRESS - SPACE - BUTTON", 22);
-
 	data->RenderMode = SOLID;
 
-	Image_LoadImage(&data->index1, "index0.png");
+	Image_LoadImage(&data->image1, "index0.jpg");
+	Image_LoadImage(&data->image2, "index0-2.png");
 }
 
 void update_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
-
-	data->FontSize = 50;
-	Text_CreateMoveText(&data->Text1, "d2coding.ttf", data->FontSize, L"T A K E N", 9,0.8f);
-
-	Text_SetFontStyle(&data->Text1, FS_BOLD);
-	Text_SetFontStyle(&data->Text2, FS_BOLD);
-	Text_SetFontStyle(&data->Text3, FS_BOLD);
 
 	if (Input_GetKeyDown(VK_SPACE))
 	{
@@ -85,16 +76,13 @@ void render_title(void)
 {
 
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
+
 	static float elapsedTime;
 	elapsedTime += Timer_GetDeltaTime();
-	Renderer_DrawImage(&data->index1, 0, 0);
-
-
-	SDL_Color foreColor = { .r = 255, .g = 255, .b = 255 };
-	SDL_Color backColor = { .a = 125 };
-	Renderer_DrawTextShaded(&data->Text1, 400, 100, foreColor, backColor);
-
-	if (elapsedTime >= 0.7f)
+	Renderer_DrawImage(&data->image1, 0, 0);
+	Renderer_DrawImage(&data->image2, 0, 95);
+	Image_SetAlphaValue(&data->image2, 0);
+	if (elapsedTime >= 0.6f)
 	{
 
 		canShow = !canShow;
@@ -104,10 +92,7 @@ void render_title(void)
 
 	if (canShow == true)
 	{
-		SDL_Color foreColor = { .r = 255 };
-		SDL_Color backColor = { .a = 0 };
-		Renderer_DrawTextShaded(&data->Text2, 275, 500, foreColor, backColor);
-		Renderer_DrawTextShaded(&data->Text3, 375, 600, foreColor, backColor);
+		Image_SetAlphaValue(&data->image2, 255);
 
 	}
 
@@ -118,11 +103,9 @@ void render_title(void)
 void release_title(void)
 {
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
+	Image_FreeImage(&data->image1);
+	Image_FreeImage(&data->image2);
 
-
-	Text_FreeText(&data->Text1);
-	Text_FreeText(&data->Text2);
-	Text_FreeText(&data->Text3);
 
 	SafeFree(g_Scene.Data);
 }
@@ -131,22 +114,15 @@ void release_title(void)
 #pragma region ruleScene
 
 
-int32		Count;//ī��Ʈ ��
-#define TEXT_COUNT 3//���ڿ� ī��Ʈ
+int32		Count;//카운트 값
+#define TEXT_COUNT 3//문자열 카운트
 
-
-const wchar_t* ruleStr[] = {
-	L"�� �� �� ��",
-	L"- �������� ���� ����� �����̽��ٸ� ������ ����� �Ѿ�ϴ�.",
-	L"- �������� �ִ� ����� ����Ű�� �����̽��ٸ� �̿��Ͽ� ������ �� �ֽ��ϴ�."
-};
 
 typedef struct RuleSceneData
 {
 	Text Text[TEXT_COUNT];
 	Image image;
 	int32 Alpha;
-	int32 ImageAlpha;
 
 } RuleSceneData;
 
@@ -159,14 +135,8 @@ void init_rule(void)
 
 	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
 
-	Image_LoadImage(&data->image, "index0.png");
-	for (int32 i = 0; i < TEXT_COUNT; ++i)
-	{
-
-		Text_CreateText(&data->Text[i], "d2coding.ttf", 25, ruleStr[i], wcslen(ruleStr[i]));
-
-	}
-	data->Alpha = 0;
+	Image_LoadImage(&data->image, "index1.jpg");
+	
 	
 }
 void update_rule(void)
@@ -177,7 +147,7 @@ void update_rule(void)
 	
 	if (Input_GetKeyDown(VK_SPACE))
 	{
-		Scene_SetNextScene(SCENE_MAIN);
+		Scene_SetNextScene(SCENE_PROLOGUE);
 	}
 
 }
@@ -186,15 +156,12 @@ void render_rule(void)
 {
 
 	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
-	Image_FadeIn(&data->image, data->Alpha, 0, 255);
+	data->Alpha = Clamp(0, data->Alpha++, 255);
+	
+	Image_FadedIn(&data->image, data->Alpha);
+	
 	Renderer_DrawImage(&data->image, 0, 0);
 	
-	data->Alpha = Clamp(1, data->Alpha + 1, 255);// ���̵� ��
-	Renderer_DrawTextFade(&data->Text[0], 10, 30, data->Alpha);
-	Renderer_DrawTextFade(&data->Text[1], 10, 600, data->Alpha);
-	Renderer_DrawTextFade(&data->Text[2], 10, 630, data->Alpha);
-
-
 
 }
 
@@ -202,16 +169,113 @@ void release_rule(void)
 {
 
 	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+	Image_FreeImage(&data->image);
 
-	Text_FreeText(&data->Text[0]);
-	Text_FreeText(&data->Text[1]);
-	Text_FreeText(&data->Text[2]);
+}
+#pragma endregion
 
+#pragma region PrologueScene
+
+const wchar_t* str[] =
+{
+	L"전직 경찰로 다리에 부상을 입고 은퇴 후 보조금을 받으며 평범하게 살아가던 데이빗",
+};
+
+
+int32		Count;//카운트 값
+#define TEXT_COUNT 3//문자열 카운트
+
+typedef struct PrologueSceneData
+{
+	Text text[TEXT_COUNT];
+	Image image;
+	int32 Alpha;
+
+} PrologueSceneData;
+
+
+
+void init_prologue(void)
+{
+	g_Scene.Data = malloc(sizeof(PrologueSceneData));
+	memset(g_Scene.Data, 0, sizeof(PrologueSceneData));
+
+	PrologueSceneData* data = (PrologueSceneData*)g_Scene.Data;
+	
+	Image_LoadImage(&data->image, "index3.jpg");
+
+
+}
+void update_prologue(void)
+{
+	PrologueSceneData* data = (PrologueSceneData*)g_Scene.Data;
+
+	Text_CreateMoveText(&data->text, "aM.ttf", 45, str[0], wcslen(str[0]), 2.0f);
+	
+
+	if (Input_GetKeyDown(VK_SPACE))
+	{
+		Scene_SetNextScene(SCENE_MAIN);
+	}
+
+}
+
+void render_prologue(void)
+{
+
+	PrologueSceneData* data = (PrologueSceneData*)g_Scene.Data;
+
+	data->Alpha = Clamp(0, data->Alpha++, 255);
+	Image_FadedIn(&data->image, data->Alpha);
+	Renderer_DrawImage(&data->image, 0, 0);
+	SDL_Color color = { .r = 255, .g = 255, .b = 255 };
+	Renderer_DrawTextBlended(&data->text, 200, 950, color);
+
+
+
+}
+
+void release_prologue(void)
+{
+
+	PrologueSceneData* data = (PrologueSceneData*)g_Scene.Data;
+	Image_FreeImage(&data->image);
+	Text_FreeText(&data->text);
 
 }
 #pragma endregion
 
 #pragma region MainScene
+
+const wchar_t* str2[] = 
+{
+	L"여기서는 사운드와 이미지 블렌딩에 대해서 알아봅시다.",
+	L"화살표키로 이미지를 이동시킬 수 있습니다.",
+	L"E키를 누르면 이펙트를 재생시킬 수 있습니다. 이펙트 소리가 작으니 볼륨을 낮춘 후 진행하세요.",
+	L"M키로 음악을 끄거나 켤 수 있습니다.",
+	L"P키로 음악을 멈추거나 재개할 수 있습니다.",
+	L"1번과 2번으로 볼륨을 조절할 수 있습니다.",
+	L"WASD로 이미지의 스케일을 조정할 수 있습니다.",
+	L"KL키로 이미지의 투명도를 조절할 수 있습니다."
+};
+
+#define GUIDELINE_COUNT 8
+
+//typedef struct MainSceneData
+//{
+//	Text		GuideLine[GUIDELINE_COUNT];
+//	Music		BGM;
+//	float		Volume;
+//	SoundEffect Effect;
+//	Image		BackGround;
+//	float		Speed;
+//	int32		X;
+//	int32		Y;
+//	int32		Alpha;
+//} MainSceneData;
+
+
+
 
 void logOnFinished(void)
 {
@@ -239,6 +303,7 @@ typedef struct MainSceneData
 	
 	
 	Text		text1;
+
 	Text		text2;	
 
 	int32		text3RedValue;
@@ -250,6 +315,7 @@ typedef struct MainSceneData
 
 	int32		select1X;
 	int32		select1Y;
+
 	Text		select1;
 	int32		select2X;
 	int32		select2Y;
@@ -430,6 +496,7 @@ void init_main(void)
 		Text_SetFontStyle(&data->text3, FS_ITALIC);
 
 
+
 	data->Volume = 1.0f;
 	
 	
@@ -442,7 +509,13 @@ void init_main(void)
 void update_main(void)
 {
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
+	
 
+	Text_CreateMoveText(&data->text1, "d2coding.ttf", 16, str2[0], wcslen(str2[0]), 2.0f);
+	Text_CreateMoveText(&data->text2, "d2coding.ttf", 16, str2[1], wcslen(str2[1]), 2.0f);
+	
+	
+	
 	if (Input_GetKeyDown('M'))
 	{
 		if (Audio_IsMusicPlaying())
@@ -501,6 +574,7 @@ void render_main(void)
 
 	Renderer_DrawImage(&data->BackGround, data->BackGroundX, data->BackGroundY);
 
+
 	SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
 	SDL_Color color3 = { .r = data->text3RedValue, .g = data->text3GreenValue, .b = data->text3BlueValue, .a = 255 };
 	
@@ -509,6 +583,7 @@ void render_main(void)
 	Renderer_DrawTextBlended(&data->text2, TEXT2_POS_X - (data->text2.Length / 2 * (TEXT2_FONT_SIZE/1.5)), TEXT2_POS_Y, color);
 
 	Renderer_DrawTextBlended(&data->text3, TEXT3_POS_X - (data->text3.Length / 2 * (data->text3FontSize/1.5)), TEXT3_POS_Y, color3);
+
 
 
 }
@@ -570,6 +645,12 @@ void Scene_Change(void)
 		g_Scene.Update = update_rule;
 		g_Scene.Render = render_rule;
 		g_Scene.Release = release_rule;
+		break;
+	case SCENE_PROLOGUE:
+		g_Scene.Init = init_prologue;
+		g_Scene.Update = update_prologue;
+		g_Scene.Render = render_prologue;
+		g_Scene.Release = release_prologue;
 		break;
 	case SCENE_MAIN:
 		g_Scene.Init = init_main;
