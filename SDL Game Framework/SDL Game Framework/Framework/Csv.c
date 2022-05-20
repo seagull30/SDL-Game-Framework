@@ -128,6 +128,13 @@ int32 ParseToInt(const CsvItem item)
 	return strtol(item.RawData, &end, 10);
 }
 
+float ParseToFloat(const CsvItem item)
+{
+	char* end;
+	return strtof(item.RawData, &end, 10);
+}
+
+
 char* ParseToAscii(const CsvItem item)
 {
 	int size = strlen(item.RawData);

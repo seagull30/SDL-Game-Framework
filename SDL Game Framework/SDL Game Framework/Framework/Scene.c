@@ -40,9 +40,15 @@ void init_title(void)
 	g_Scene.Data = malloc(sizeof(TitleSceneData));
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
 	memset(&csvFile, 0, sizeof(CsvFile));
+<<<<<<< Updated upstream
 	//CSVInit("°ÔÀÓºÏ CSV - ½ÃÆ®1.csv", scenedata);
 	
  	CreateCsvFile(&csvFile,"°ÔÀÓºÏ CSV0 (1).csv");
+=======
+	//CSVInit("ï¿½ï¿½ï¿½Óºï¿½ CSV - ï¿½ï¿½Æ®1.csv", scenedata);
+	
+ 	CreateCsvFile(&csvFile,"ï¿½ï¿½ï¿½Óºï¿½ CSV.csv");
+>>>>>>> Stashed changes
 
 	Audio_LoadMusic(&backmusic, "index1.mp3");
 	//Audio_HookMusicFinished(logOnFinished);
@@ -98,7 +104,7 @@ void render_title(void)
 	{
 
 		canShow = !canShow;
-		elapsedTime = 0.0f;
+		titleElapsedTime = 0.0f;
 
 	}
 
@@ -131,8 +137,13 @@ void release_title(void)
 #pragma region ruleScene
 
 
+<<<<<<< Updated upstream
 int32		Count;//Ä«¿îÆ® °ª
 #define TEXT_COUNT 3//¹®ÀÚ¿­ Ä«¿îÆ®
+=======
+int32		Count;//Ä«ï¿½ï¿½Æ® ï¿½ï¿½
+#define TEXT_COUNT 3//ï¿½ï¿½ï¿½Ú¿ï¿½ Ä«ï¿½ï¿½Æ®
+>>>>>>> Stashed changes
 
 
 const wchar_t* ruleStr[] = {
@@ -189,10 +200,54 @@ void render_rule(void)
 	Image_FadeIn(&data->image, data->Alpha, 0, 255);
 	Renderer_DrawImage(&data->image, 0, 0);
 	
+<<<<<<< Updated upstream
 	data->Alpha = Clamp(1, data->Alpha + 1, 255);// ÆäÀÌµå ÀÎ
 	Renderer_DrawTextFade(&data->Text[0], 10, 30, data->Alpha);
 	Renderer_DrawTextFade(&data->Text[1], 10, 600, data->Alpha);
 	Renderer_DrawTextFade(&data->Text[2], 10, 630, data->Alpha);
+=======
+
+}
+
+void release_rule(void)
+{
+
+	RuleSceneData* data = (RuleSceneData*)g_Scene.Data;
+	Image_FreeImage(&data->image);
+
+}
+#pragma endregion
+
+#pragma region PrologueScene
+
+const wchar_t* str[] =
+{
+	L"ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¸ï¿½ï¿½ï¿½ ï¿½Î»ï¿½ï¿½ï¿½ ï¿½Ô°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìºï¿½",
+};
+
+
+int32		Count;//Ä«ï¿½ï¿½Æ® ï¿½ï¿½
+#define TEXT_COUNT 3//ï¿½ï¿½ï¿½Ú¿ï¿½ Ä«ï¿½ï¿½Æ®
+
+typedef struct PrologueSceneData
+{
+	Text text[TEXT_COUNT];
+	Image image;
+	int32 Alpha;
+
+} PrologueSceneData;
+
+
+
+void init_prologue(void)
+{
+	g_Scene.Data = malloc(sizeof(PrologueSceneData));
+	memset(g_Scene.Data, 0, sizeof(PrologueSceneData));
+
+	PrologueSceneData* data = (PrologueSceneData*)g_Scene.Data;
+	
+	Image_LoadImage(&data->image, "index3.jpg");
+>>>>>>> Stashed changes
 
 
 
@@ -213,6 +268,36 @@ void release_rule(void)
 
 #pragma region MainScene
 
+<<<<<<< Updated upstream
+=======
+//	Text		GuideLine[GUIDELINE_COUNT];
+//	Music		BGM;
+//	float		Volume;
+//	SoundEffect Effect;
+//	Image		BackGround;
+//	float		Speed;
+//	int32		X;
+//	int32		Y;
+//	int32		Alpha;
+//} MainSceneData;
+
+
+
+
+//	Text		GuideLine[GUIDELINE_COUNT];
+//	Music		BGM;
+//	float		Volume;
+//	SoundEffect Effect;
+//	Image		BackGround;
+//	float		Speed;
+//	int32		X;
+//	int32		Y;
+//	int32		Alpha;
+//} MainSceneData;
+
+
+
+>>>>>>> Stashed changes
 void logOnFinished(void)
 {
 	LogInfo("You can show this log on stopped the music");
@@ -223,9 +308,8 @@ void log2OnFinished(int32 channel)
 	LogInfo("You can show this log on stopped the effect");
 }
 typedef struct MainSceneData
-{
-	int32		index;
-	Music		BGM;
+
+	Text		select1;
 	char*		playMusic;
 	float		Volume;
 	Image		BackGround;
@@ -236,27 +320,38 @@ typedef struct MainSceneData
 	int32		textSpeed;
 	int32		textEffect;
 
-	
-	
 	Text		text1;
+<<<<<<< Updated upstream
 	Text		text2;	
+=======
 
+>>>>>>> Stashed changes
+
+	Text		select1;
 	int32		text3RedValue;
 	int32		text3GreenValue;
 	int32		text3BlueValue;
 	int32		text3FontSize;
 	bool		text3isITALIC;
 	Text		text3;
+	int32		text3Len;
+	int32		text3LoadLen;
+	float		text3speed;
 
 	int32		select1X;
 	int32		select1Y;
+<<<<<<< Updated upstream
 	Text		select1;
+=======
+
+	Image		select1;
+>>>>>>> Stashed changes
 	int32		select2X;
 	int32		select2Y;
-	Text		select2;
+	Image		select2;
 	int32		select3X;
 	int32		select3Y;
-	Text		select3;
+	Image		select3;
 	int32		selectCount;
 	int32		selectValue[3];
 	int32		playerSelectValue;
@@ -266,6 +361,7 @@ typedef enum mainSceneDataNumber
 {
 index,
 BGMFileName,
+EffectSound,
 BackGroundFileName,
 imageTime,
 imageEffect,
@@ -274,7 +370,7 @@ textSpeed,
 text1,
 text1Effect,
 text2,
-text2Effect,
+//text2Effect,
 text3,
 text3Effect,
 select1,
@@ -288,7 +384,6 @@ select3Value
 static int32 sceneNum = 4;
 static int32 prevSceneNum = 1;
 Music backmusic;
-
 void init_main(void)
 {
 	g_Scene.Data = malloc(sizeof(MainSceneData));
@@ -318,35 +413,53 @@ void init_main(void)
 		}
 	}
 	
-	//switch (data->selectCount)
-	//{
-	//case 2:
-	//	Text_CreateText(&data->select1, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select1]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select1])));
-	//	data->select1X = 100;
-	//	data->select1Y = 100;
-	//	Text_CreateText(&data->select2, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select2]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select2])));
-	//	data->select2X = 100;
-	//	data->select2Y = 100;
-	//	break;
-	//case 3:
-	//	Text_CreateText(&data->select1, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select1]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select1])));
-	//	data->select1X = 100;
-	//	data->select1Y = 100;
-	//	Text_CreateText(&data->select2, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select2]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select2])));
-	//	data->select2X = 100;
-	//	data->select2Y = 100;
-	//	Text_CreateText(&data->select3, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select3]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select2])));
-	//	data->select3X = 100;
-	//	data->select3Y = 100;
-	//	break;
-	//default:
-	//	break;
-	//}
+	switch (data->selectCount)
+	{
+	case 2:
+		Image_LoadImage(&data->select1, ParseToAscii(csvFile.Items[sceneNum][select1]));
+		data->select1X = 580;
+		data->select1Y = SELECT_POS_Y;
+		Image_LoadImage(&data->select2, ParseToAscii(csvFile.Items[sceneNum][select2]));
+		data->select2X = 985;
+		data->select2Y = SELECT_POS_Y;
+		break;
+	case 3:
+		Image_LoadImage(&data->select1, ParseToAscii(csvFile.Items[sceneNum][select1]));
+		data->select1X = 380;
+		data->select1Y = SELECT_POS_Y;
+		Image_LoadImage(&data->select2, ParseToAscii(csvFile.Items[sceneNum][select2]));
+		data->select2X = 785;
+		data->select2Y = SELECT_POS_Y;
+		Image_LoadImage(&data->select3, ParseToAscii(csvFile.Items[sceneNum][select3]));
+		data->select3X = 1190;
+		data->select3Y = SELECT_POS_Y;
+		break;
+	default:
+		Image_LoadImage(&data->select1, ParseToAscii(csvFile.Items[sceneNum][select1]));
+		data->select1X = 70;
+		data->select1Y = 990;
+
+		break;
+	}
 
 
 	data->text3RedValue = 255;
 	data->text3GreenValue = 255;
 	data->text3BlueValue = 255;
+	//1. ï¿½ï¿½ï¿½, 26p
+	//2. ï¿½ï¿½ï¿½, 27p
+	switch (ParseToInt(csvFile.Items[sceneNum][text1Effect]))
+	{
+
+	case 2:
+		data->text1FontSize = 27;
+		break;
+	default:
+		data->text1FontSize = 26;
+		break;
+	}
+
+
 
 	switch (ParseToInt(csvFile.Items[sceneNum][text3Effect]))
 	{
@@ -416,11 +529,12 @@ void init_main(void)
 	wchar_t* chr2 = ParseToUnicode(csvFile.Items[sceneNum][text2]);
 
 	//if (chr != L"0")
-		Text_CreateText(&data->text1, TEXT1_FONT, TEXT1_FONT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][text1]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text1])));
+		Text_CreateText(&data->text1, TEXT1_FONT, data->text1FontSize, ParseToUnicode(csvFile.Items[sceneNum][text1]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text1])));
 	//if (chr2 != L"0")
 		Text_CreateText(&data->text2, TEXT2_FONT, TEXT2_FONT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][text2]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text2])));
-	//if (ParseToUnicode(csvFile.Items[sceneNum][text3]) != 0)
-		Text_CreateText(&data->text3, "aL.ttf", data->text3FontSize, ParseToUnicode(csvFile.Items[sceneNum][text3]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text3])));
+	
+	//Text_CreateText(&data->text3, "aL.ttf", data->text3FontSize, ParseToUnicode(csvFile.Items[sceneNum][text3]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text3])));
+
 
 	//Text_LoadText(&data->text1, ParseToAscii(csvFile.Items[sceneNum][textFileName1]));
 	//Text_LoadText(&data->text2, ParseToAscii(csvFile.Items[sceneNum][textFileName2]));
@@ -432,10 +546,16 @@ void init_main(void)
 
 	data->Volume = 1.0f;
 	
+
+	Text_CreateMoveText(&data->text1, "d2coding.ttf", 16, str2[0], wcslen(str2[0]), 2.0f);
+	Text_CreateMoveText(&data->text2, "d2coding.ttf", 16, str2[1], wcslen(str2[1]), 2.0f);
 	
-	data->BackGroundX = 0;
-	data->BackGroundY = 0;
+	
+	
 	data->playerSelectValue = 1;
+
+	
+	textElapsedtime = 0;
 	
 }
 
@@ -443,6 +563,11 @@ void update_main(void)
 {
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
 
+<<<<<<< Updated upstream
+=======
+	
+	
+>>>>>>> Stashed changes
 	if (Input_GetKeyDown('M'))
 	{
 		if (Audio_IsMusicPlaying())
@@ -482,7 +607,6 @@ void update_main(void)
 	}
 	
 	if (Input_GetKeyDown(VK_DOWN))
-	{
 		if (data->playerSelectValue < data->selectCount)
 			++data->playerSelectValue;
 	}
@@ -493,6 +617,18 @@ void update_main(void)
 		
 		Scene_SetNextScene(SCENE_MAIN);
 	}
+	textElapsedtime += Timer_GetDeltaTime();
+	if (data->text3LoadLen != data->text3Len)
+	{
+		if (textElapsedtime >= data->text3speed)
+		{
+			textElapsedtime = 0;
+
+			Text_CreateText(&data->text3, "aL.ttf", data->text3FontSize, ParseToUnicode(csvFile.Items[sceneNum][text3]), data->text3LoadLen);
+		}
+
+	}
+
 }
 
 void render_main(void)
