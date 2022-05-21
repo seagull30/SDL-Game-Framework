@@ -35,8 +35,8 @@ typedef struct TitleSceneData
 
 
 Music backmusic;
-char* prevPlayMusic;
-char* playMusic;
+
+char* playMusicName;
 
 void init_title(void)
 {
@@ -47,9 +47,9 @@ void init_title(void)
  	CreateCsvFile(&csvFile,"게임북 CSV.csv");
 
 	Audio_LoadMusic(&backmusic, "index1.mp3");
-	Audio_PlayFadeIn(&backmusic, INFINITY_LOOP, 3000);
-	playMusic = "index.mp3";
-	prevPlayMusic = "index.mp3";
+	Audio_Play(&backmusic, INFINITY_LOOP);
+	playMusicName = "index1.mp3";
+	
 
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
@@ -283,6 +283,7 @@ typedef struct MainSceneData
 	Music		BGM;
 	char*		playMusic;
 	float		Volume;
+	SoundEffect Effect;
 
 	Image		BackGround;
 	int32		BackGroundX;
@@ -293,7 +294,6 @@ typedef struct MainSceneData
 
 	int32		imageEffect;
 
-	
 	int32		textEffect;
 
 	Text		text1;
@@ -355,7 +355,7 @@ select3,
 select3Value
 } mainSceneDataNumber;
 
-static int32 sceneNum = 5;
+static int32 sceneNum = 1;
 static int32 prevSceneNum = 1;
 Music backmusic;
 
@@ -368,13 +368,14 @@ void init_main(void)
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
 
 	data->index = ParseToInt(csvFile.Items[sceneNum][index]);
-
-	if (ParseToAscii(csvFile.Items[sceneNum][BGMFileName])!="index1.mp3")
+	char* nextBGMName = ParseToAscii(csvFile.Items[sceneNum][BGMFileName]);
+	if (strcmp(nextBGMName, playMusicName) != 0)
 	{
-		Audio_Stop();
-		Audio_LoadMusic(&data->BGM, ParseToAscii(csvFile.Items[sceneNum][BGMFileName]));
+		Audio_FreeMusic(&backmusic);
+		playMusicName = nextBGMName;
+		Audio_LoadMusic(&backmusic, nextBGMName);
 		Audio_HookMusicFinished(logOnFinished);
-		Audio_PlayFadeIn(&data->BGM, INFINITY_LOOP, 3000);	
+		Audio_Play(&backmusic, INFINITY_LOOP);
 	}
 
 	Image_LoadImage(&data->BackGround, ParseToAscii(csvFile.Items[sceneNum][BackGroundFileName]));
@@ -382,7 +383,7 @@ void init_main(void)
 	data->selectCount = 0;
 	for (int i = 0; i < 3; ++i)
 	{
-		int32 check = ParseToInt(csvFile.Items[sceneNum][select1Value]);
+		int32 check = ParseToInt(csvFile.Items[sceneNum][select1Value + i * 2]);
 		if (check != 0)
 		{
 			data->selectValue[i] = check;
@@ -508,19 +509,26 @@ void init_main(void)
 	if (data->text3isITALIC)
 		Text_SetFontStyle(&data->text3, FS_ITALIC);
 
-	//data->imageEffect = ParseToInt(csvFile.Items[sceneNum][imageEffect]);
-	//
-	//switch (data->imageEffect)
-	//{
-	//case 1:
-	//	break;
-	//case 2:
-	//	break;
-	//default:
-	//	break;
-	//}
-
-
+	data->imageEffect = ParseToInt(csvFile.Items[sceneNum][imageEffect]);
+	
+	switch (data->imageEffect)
+	{
+	case 1:
+		data->BackGroundEffectCount = 6;
+		data->BackGroundEffectElasedTime = 0;
+		break;
+	case 2:
+		data->BackGroundEffectCount = 6;
+		data->BackGroundEffectElasedTime = 0;
+		break;
+	default:
+		break;
+	}
+	if (ParseToAscii(csvFile.Items[sceneNum][EffectSound])[0] != '0')
+	{
+		Audio_LoadSoundEffect(&data->Effect, ParseToAscii(csvFile.Items[sceneNum][EffectSound]));
+		Audio_PlaySoundEffect(&data->Effect, 0);
+	}
 
 	data->Volume = 1.0f;
 	
@@ -547,6 +555,10 @@ void update_main(void)
 {
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
 
+	if (Input_GetKeyDown('E'))
+	{
+		Audio_PlaySoundEffect(&data->Effect, 1);
+	}
 
 	if (Input_GetKeyDown('M'))
 	{
@@ -578,16 +590,18 @@ void update_main(void)
 		if (data->textIsShow)
 		{
 			prevSceneNum = sceneNum;
-			sceneNum = data->selectValue[data->playerSelectValue];
+			sceneNum = data->selectValue[data->playerSelectValue - 1];
 			Scene_SetNextScene(SCENE_MAIN);
 		}
 	}
 
 	if (Input_GetKey(VK_SPACE))
 	{
-		if (data->text3Speed > 0.0f)
-			data->text3Speed -= 0.005f;
 
+		data->text3Speed = 0.00f;
+		//data->text3LoadLen = data->text3Len;
+		//data->textIsShow = !data->textIsShow;
+		//Text_CreateText(&data->text3, "aL.ttf", data->text3FontSize, ParseToUnicode(csvFile.Items[sceneNum][text3]), data->text3LoadLen);
 	}
 
 	if (Input_GetKeyUp(VK_SPACE))
@@ -596,13 +610,13 @@ void update_main(void)
 	}
 
 	//선택지 선택
-	if (Input_GetKeyDown(VK_UP))
+	if (Input_GetKeyDown(VK_LEFT))
 	{
 		if (data->playerSelectValue > 1)
 			--data->playerSelectValue;
 	}
 
-	if (Input_GetKeyDown(VK_DOWN))
+	if (Input_GetKeyDown(VK_RIGHT))
 	{
 		if (data->playerSelectValue < data->selectCount)
 			++data->playerSelectValue;
@@ -635,6 +649,28 @@ void update_main(void)
 		}
 	}
 
+	switch (data->playerSelectValue)
+	{
+	case 1:
+		Image_SetAlphaValue(&data->select1, 255);
+		Image_SetAlphaValue(&data->select2, 100);
+		Image_SetAlphaValue(&data->select3, 100);
+		break;
+	case 2:
+		Image_SetAlphaValue(&data->select1, 100);
+		Image_SetAlphaValue(&data->select2, 255);
+		Image_SetAlphaValue(&data->select3, 100);
+		break;
+	case 3:
+		Image_SetAlphaValue(&data->select1, 100);
+		Image_SetAlphaValue(&data->select2, 100);
+		Image_SetAlphaValue(&data->select3, 255);
+		break;
+	default:
+		break;
+	}
+
+
 
 }
 
@@ -644,6 +680,15 @@ void render_main(void)
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
 
 	Renderer_DrawImage(&data->BackGround, data->BackGroundX, data->BackGroundY);
+
+	if (data->textIsShow)
+	{
+
+		Renderer_DrawImage(&data->select1, data->select1X, data->select1Y);
+		Renderer_DrawImage(&data->select2, data->select2X, data->select2Y);
+		Renderer_DrawImage(&data->select3, data->select3X, data->select3Y);
+
+	}
 
 
 	SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
@@ -670,9 +715,10 @@ void release_main(void)
 	Text_FreeText(&data->text2);
 	Text_FreeText(&data->text3);
 	Image_FreeImage(&data->BackGround);
+	Audio_FreeSoundEffect(&data->Effect);
 	Audio_FreeMusic(&data->BGM);
-	if (ParseToAscii(csvFile.Items[sceneNum][BGMFileName]) != "index1.mp3")
-		Audio_Play(&backmusic, INFINITY_LOOP);
+	//if (ParseToAscii(csvFile.Items[sceneNum][BGMFileName]) != "index1.mp3")
+	//	Audio_Play(&backmusic, INFINITY_LOOP);
 	SafeFree(g_Scene.Data);
 }
 #pragma endregion

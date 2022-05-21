@@ -16,7 +16,7 @@ void readFileToBuffer(const char* filename)
 	}
 
 	fseek(fp, 0, SEEK_END);
-	long fileSize = ftell(fp);
+	int32 fileSize = ftell(fp);
 
 	s_Buffer = malloc(fileSize + 1);
 	memset(s_Buffer, 0, fileSize + 1);
@@ -29,7 +29,7 @@ void readFileToBuffer(const char* filename)
 
 int32 countCategory(const char* firstLine)
 {
-	int result = 1;
+	int32 result = 1;
 	while (*firstLine != '\n')
 	{
 		if (*firstLine == ',')
@@ -78,14 +78,14 @@ void CreateCsvFile(CsvFile* csvFile, const char* filename)
 
 		const char* recordStart = lineStart;
 		const char* recordEnd = recordStart;
-		for (int i = 0; i < csvFile->ColumnCount; ++i)
+		for (int32 i = 0; i < csvFile->ColumnCount; ++i)
 		{
 			while (*recordEnd != ',' && recordEnd != lineEnd)
 			{
 				++recordEnd;
 			}
 
-			int size = recordEnd - recordStart;
+			int32 size = recordEnd - recordStart;
 			csvFile->Items[row][i].RawData = malloc(size + 1);
 			memcpy(csvFile->Items[row][i].RawData, recordStart, size);
 			csvFile->Items[row][i].RawData[size] = '\0';
@@ -106,11 +106,11 @@ void CreateCsvFile(CsvFile* csvFile, const char* filename)
 
 void FreeCsvFile(CsvFile* csvFile)
 {
-	for (int r = 0; r < MAXIMUM_ROW; ++r)
+	for (int32 r = 0; r < MAXIMUM_ROW; ++r)
 	{
 		if (r < csvFile->RowCount)
 		{
-			for (int c = 0; c < csvFile->ColumnCount; ++c)
+			for (int32 c = 0; c < csvFile->ColumnCount; ++c)
 			{
 				free(csvFile->Items[r][c].RawData);
 				//csvFile->Items[r][c].RawData = NULL;
@@ -139,7 +139,7 @@ float ParseToFloat(const CsvItem item)
 
 char* ParseToAscii(const CsvItem item)
 {
-	int size = strlen(item.RawData);
+	int32 size = strlen(item.RawData);
 	char* result = malloc(size + 1);
 	memset(result, 0, size + 1);
 	if (item.RawData[0] == '"' && item.RawData[size - 1] == '"')
