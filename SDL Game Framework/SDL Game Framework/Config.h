@@ -21,7 +21,7 @@
 #define CLEAR_COLOR_B	255
 #define CLEAR_COLOR_A	255
 
-
+#define SELECT_POS_Y 365
 
 #define TEXT1_FONT "aB.ttf"
 #define TEXT1_FONT_SIZE 23 * ONE_POINT_FIVE

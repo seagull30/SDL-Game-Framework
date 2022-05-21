@@ -37,6 +37,13 @@ void		FreeCsvFile(CsvFile* csvFile);
 int32		ParseToInt(const CsvItem item);
 
 /// <summary>
+/// 레코드를 실수로 가져온다.
+/// </summary>
+/// <param name="item">레코드</param>
+/// <returns></returns>
+float ParseToFloat(const CsvItem item);
+
+/// <summary>
 /// 레코드를 문자열로 가져온다.
 /// </summary>
 /// <param name="item">레코드</param>
