@@ -43,12 +43,10 @@ void init_title(void)
 	g_Scene.Data = malloc(sizeof(TitleSceneData));
 	memset(g_Scene.Data, 0, sizeof(TitleSceneData));
 	memset(&csvFile, 0, sizeof(CsvFile));
-	//CSVInit("ê²Œìž„ë¶ CSV - ì‹œíŠ¸1.csv", scenedata);
 	
- 	CreateCsvFile(&csvFile,"ê²Œìž„ë¶ CSV0 (1).csv");
+ 	CreateCsvFile(&csvFile,"°ÔÀÓºÏ CSV.csv");
 
 	Audio_LoadMusic(&backmusic, "index1.mp3");
-	//Audio_HookMusicFinished(logOnFinished);
 	Audio_PlayFadeIn(&backmusic, INFINITY_LOOP, 3000);
 	playMusic = "index.mp3";
 	prevPlayMusic = "index.mp3";
@@ -77,16 +75,16 @@ void render_title(void)
 
 	TitleSceneData* data = (TitleSceneData*)g_Scene.Data;
 
-	static float elapsedTime;
-	elapsedTime += Timer_GetDeltaTime();
+	static float imageElapsedTime;
+	imageElapsedTime += Timer_GetDeltaTime();
 	Renderer_DrawImage(&data->image1, 0, 0);
 	Renderer_DrawImage(&data->image2, 0, 95);
 	Image_SetAlphaValue(&data->image2, 0);
-	if (elapsedTime >= 0.6f)
+	if (imageElapsedTime >= 0.6f)
 	{
 
 		canShow = !canShow;
-		elapsedTime = 0.0f;
+		imageElapsedTime = 0.0f;
 
 	}
 
@@ -114,8 +112,8 @@ void release_title(void)
 #pragma region ruleScene
 
 
-int32		Count;//ì¹´ìš´íŠ¸ ê°’
-#define TEXT_COUNT 3//ë¬¸ìžì—´ ì¹´ìš´íŠ¸
+int32		Count;//Ä«¿îÆ® °ª
+#define TEXT_COUNT 3//¹®ÀÚ¿­ Ä«¿îÆ®
 
 
 typedef struct RuleSceneData
@@ -178,18 +176,24 @@ void release_rule(void)
 
 const wchar_t* str[] =
 {
-	L"ì „ì§ ê²½ì°°ë¡œ ë‹¤ë¦¬ì— ë¶€ìƒì„ ìž…ê³  ì€í‡´ í›„ ë³´ì¡°ê¸ˆì„ ë°›ìœ¼ë©° í‰ë²”í•˜ê²Œ ì‚´ì•„ê°€ë˜ ë°ì´ë¹—",
+	L"ÀüÁ÷ °æÂû·Î ´Ù¸®¿¡ ºÎ»óÀ» ÀÔ°í ÀºÅð ÈÄ º¸Á¶±ÝÀ» ¹ÞÀ¸¸ç Æò¹üÇÏ°Ô »ì¾Æ°¡´ø µ¥ÀÌºø",
 };
 
 
-int32		Count;//ì¹´ìš´íŠ¸ ê°’
-#define TEXT_COUNT 3//ë¬¸ìžì—´ ì¹´ìš´íŠ¸
+int32		Count;//Ä«¿îÆ® °ª
+#define TEXT_COUNT 3//¹®ÀÚ¿­ Ä«¿îÆ®
+
 
 typedef struct PrologueSceneData
 {
 	Text text[TEXT_COUNT];
 	Image image;
 	int32 Alpha;
+	float elapsedTime;
+	int32 textLen;
+	int32 textLoadLen;
+
+
 
 } PrologueSceneData;
 
@@ -205,17 +209,34 @@ void init_prologue(void)
 	Image_LoadImage(&data->image, "index3.jpg");
 
 
+	data->elapsedTime = 0;
+	data->textLen = wcslen(str[0]);
+	data->textLoadLen = 0;
+
+
 }
 void update_prologue(void)
 {
 	PrologueSceneData* data = (PrologueSceneData*)g_Scene.Data;
 
-	Text_CreateMoveText(&data->text, "aM.ttf", 45, str[0], wcslen(str[0]), 2.0f);
+	
 	
 
 	if (Input_GetKeyDown(VK_SPACE))
 	{
 		Scene_SetNextScene(SCENE_MAIN);
+	}
+
+	data->elapsedTime += Timer_GetDeltaTime();
+	if (data->textLoadLen != data->textLen)
+	{
+		if (data->elapsedTime >= 0.03f)
+		{
+			data->elapsedTime = 0;
+			++data->textLoadLen;
+			Text_CreateText(&data->text, "aM.ttf", 45, str[0], data->textLoadLen);
+		}
+
 	}
 
 }
@@ -247,36 +268,6 @@ void release_prologue(void)
 
 #pragma region MainScene
 
-const wchar_t* str2[] = 
-{
-	L"ì—¬ê¸°ì„œëŠ” ì‚¬ìš´ë“œì™€ ì´ë¯¸ì§€ ë¸”ë Œë”©ì— ëŒ€í•´ì„œ ì•Œì•„ë´…ì‹œë‹¤.",
-	L"í™”ì‚´í‘œí‚¤ë¡œ ì´ë¯¸ì§€ë¥¼ ì´ë™ì‹œí‚¬ ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
-	L"Eí‚¤ë¥¼ ëˆ„ë¥´ë©´ ì´íŽ™íŠ¸ë¥¼ ìž¬ìƒì‹œí‚¬ ìˆ˜ ìžˆìŠµë‹ˆë‹¤. ì´íŽ™íŠ¸ ì†Œë¦¬ê°€ ìž‘ìœ¼ë‹ˆ ë³¼ë¥¨ì„ ë‚®ì¶˜ í›„ ì§„í–‰í•˜ì„¸ìš”.",
-	L"Mí‚¤ë¡œ ìŒì•…ì„ ë„ê±°ë‚˜ ì¼¤ ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
-	L"Pí‚¤ë¡œ ìŒì•…ì„ ë©ˆì¶”ê±°ë‚˜ ìž¬ê°œí•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
-	L"1ë²ˆê³¼ 2ë²ˆìœ¼ë¡œ ë³¼ë¥¨ì„ ì¡°ì ˆí•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
-	L"WASDë¡œ ì´ë¯¸ì§€ì˜ ìŠ¤ì¼€ì¼ì„ ì¡°ì •í•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤.",
-	L"KLí‚¤ë¡œ ì´ë¯¸ì§€ì˜ íˆ¬ëª…ë„ë¥¼ ì¡°ì ˆí•  ìˆ˜ ìžˆìŠµë‹ˆë‹¤."
-};
-
-#define GUIDELINE_COUNT 8
-
-//typedef struct MainSceneData
-//{
-//	Text		GuideLine[GUIDELINE_COUNT];
-//	Music		BGM;
-//	float		Volume;
-//	SoundEffect Effect;
-//	Image		BackGround;
-//	float		Speed;
-//	int32		X;
-//	int32		Y;
-//	int32		Alpha;
-//} MainSceneData;
-
-
-
-
 void logOnFinished(void)
 {
 	LogInfo("You can show this log on stopped the music");
@@ -292,17 +283,21 @@ typedef struct MainSceneData
 	Music		BGM;
 	char*		playMusic;
 	float		Volume;
+
 	Image		BackGround;
 	int32		BackGroundX;
 	int32		BackGroundY;
+	bool		BackGroundEffectisActive;
+	int32		BackGroundEffectCount;
+	int32		BackGroundEffectElasedTime;
+
 	int32		imageEffect;
-	int32		textTime;
-	int32		textSpeed;
-	int32		textEffect;
 
 	
-	
+	int32		textEffect;
+
 	Text		text1;
+	int32		text1FontSize;
 
 	Text		text2;	
 
@@ -312,17 +307,25 @@ typedef struct MainSceneData
 	int32		text3FontSize;
 	bool		text3isITALIC;
 	Text		text3;
+	int32		text3Delay;
+	float		text3DelayElapsedtime;
+	int32		text3Len;
+	int32		text3LoadLen;
+	float		text3Speed;
+	float		text3Elapsedtime;
 
+	bool		textIsShow;
+
+	Image		select1;
 	int32		select1X;
 	int32		select1Y;
-
-	Text		select1;
+	Image		select2;
 	int32		select2X;
 	int32		select2Y;
-	Text		select2;
+	Image		select3;
 	int32		select3X;
 	int32		select3Y;
-	Text		select3;
+
 	int32		selectCount;
 	int32		selectValue[3];
 	int32		playerSelectValue;
@@ -332,6 +335,7 @@ typedef enum mainSceneDataNumber
 {
 index,
 BGMFileName,
+EffectSound,
 BackGroundFileName,
 imageTime,
 imageEffect,
@@ -340,7 +344,7 @@ textSpeed,
 text1,
 text1Effect,
 text2,
-text2Effect,
+//text2Effect,
 text3,
 text3Effect,
 select1,
@@ -351,9 +355,11 @@ select3,
 select3Value
 } mainSceneDataNumber;
 
-static int32 sceneNum = 4;
+static int32 sceneNum = 5;
 static int32 prevSceneNum = 1;
 Music backmusic;
+
+
 
 void init_main(void)
 {
@@ -384,35 +390,49 @@ void init_main(void)
 		}
 	}
 	
-	//switch (data->selectCount)
-	//{
-	//case 2:
-	//	Text_CreateText(&data->select1, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select1]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select1])));
-	//	data->select1X = 100;
-	//	data->select1Y = 100;
-	//	Text_CreateText(&data->select2, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select2]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select2])));
-	//	data->select2X = 100;
-	//	data->select2Y = 100;
-	//	break;
-	//case 3:
-	//	Text_CreateText(&data->select1, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select1]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select1])));
-	//	data->select1X = 100;
-	//	data->select1Y = 100;
-	//	Text_CreateText(&data->select2, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select2]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select2])));
-	//	data->select2X = 100;
-	//	data->select2Y = 100;
-	//	Text_CreateText(&data->select3, FONT, TEXT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][select3]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][select2])));
-	//	data->select3X = 100;
-	//	data->select3Y = 100;
-	//	break;
-	//default:
-	//	break;
-	//}
-
-
+	switch (data->selectCount)
+	{
+	case 2:
+		Image_LoadImage(&data->select1, ParseToAscii(csvFile.Items[sceneNum][select1]));
+		data->select1X = 580;
+		data->select1Y = SELECT_POS_Y;
+		Image_LoadImage(&data->select2, ParseToAscii(csvFile.Items[sceneNum][select2]));
+		data->select2X = 985;
+		data->select2Y = SELECT_POS_Y;
+		break;
+	case 3:
+		Image_LoadImage(&data->select1, ParseToAscii(csvFile.Items[sceneNum][select1]));
+		data->select1X = 380;
+		data->select1Y = SELECT_POS_Y;
+		Image_LoadImage(&data->select2, ParseToAscii(csvFile.Items[sceneNum][select2]));
+		data->select2X = 785;
+		data->select2Y = SELECT_POS_Y;
+		Image_LoadImage(&data->select3, ParseToAscii(csvFile.Items[sceneNum][select3]));
+		data->select3X = 1190;
+		data->select3Y = SELECT_POS_Y;
+		break;
+	default:
+		Image_LoadImage(&data->select1, ParseToAscii(csvFile.Items[sceneNum][select1]));
+		data->select1X = 70;
+		data->select1Y = 990;
+		break;
+	}
 	data->text3RedValue = 255;
 	data->text3GreenValue = 255;
 	data->text3BlueValue = 255;
+
+	switch (ParseToInt(csvFile.Items[sceneNum][text1Effect]))
+	{
+
+	case 2:
+		data->text1FontSize = 27;
+		break;
+	default:
+		data->text1FontSize = 26;
+		break;
+	}
+
+
 
 	switch (ParseToInt(csvFile.Items[sceneNum][text3Effect]))
 	{
@@ -478,22 +498,27 @@ void init_main(void)
 		data->text3isITALIC = false;
 		break;
 	}
-	wchar_t* chr = ParseToUnicode(csvFile.Items[sceneNum][text1]);
-	wchar_t* chr2 = ParseToUnicode(csvFile.Items[sceneNum][text2]);
-
-	//if (chr != L"0")
+	
 		Text_CreateText(&data->text1, TEXT1_FONT, TEXT1_FONT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][text1]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text1])));
-	//if (chr2 != L"0")
+	
 		Text_CreateText(&data->text2, TEXT2_FONT, TEXT2_FONT_SIZE, ParseToUnicode(csvFile.Items[sceneNum][text2]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text2])));
-	//if (ParseToUnicode(csvFile.Items[sceneNum][text3]) != 0)
-		Text_CreateText(&data->text3, "aL.ttf", data->text3FontSize, ParseToUnicode(csvFile.Items[sceneNum][text3]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text3])));
+		//Text_CreateText(&data->text3, "aL.ttf", data->text3FontSize, ParseToUnicode(csvFile.Items[sceneNum][text3]), wcslen(ParseToUnicode(csvFile.Items[sceneNum][text3])));
 
-	//Text_LoadText(&data->text1, ParseToAscii(csvFile.Items[sceneNum][textFileName1]));
-	//Text_LoadText(&data->text2, ParseToAscii(csvFile.Items[sceneNum][textFileName2]));
-	//Text_LoadText(&data->text3, ParseToAscii(csvFile.Items[sceneNum][textFileName3]));
-
+	
 	if (data->text3isITALIC)
 		Text_SetFontStyle(&data->text3, FS_ITALIC);
+
+	//data->imageEffect = ParseToInt(csvFile.Items[sceneNum][imageEffect]);
+	//
+	//switch (data->imageEffect)
+	//{
+	//case 1:
+	//	break;
+	//case 2:
+	//	break;
+	//default:
+	//	break;
+	//}
 
 
 
@@ -503,19 +528,26 @@ void init_main(void)
 	data->BackGroundX = 0;
 	data->BackGroundY = 0;
 	data->playerSelectValue = 1;
-	
+
+	data->text3Len = wcslen(ParseToUnicode(csvFile.Items[sceneNum][text3]));
+	data->text3LoadLen = 0;
+
+	if (data->text3LoadLen == data->text3Len)
+		data->textIsShow = true;
+	else
+		data->textIsShow = false;
+	data->text3Delay = ParseToInt(csvFile.Items[sceneNum][textTime]);
+	data->text3DelayElapsedtime = 0;
+	data->text3Speed = ParseToFloat(csvFile.Items[sceneNum][textSpeed]);
+	data-> text3Elapsedtime = 0;
+
 }
 
 void update_main(void)
 {
 	MainSceneData* data = (MainSceneData*)g_Scene.Data;
-	
 
-	Text_CreateMoveText(&data->text1, "d2coding.ttf", 16, str2[0], wcslen(str2[0]), 2.0f);
-	Text_CreateMoveText(&data->text2, "d2coding.ttf", 16, str2[1], wcslen(str2[1]), 2.0f);
-	
-	
-	
+
 	if (Input_GetKeyDown('M'))
 	{
 		if (Audio_IsMusicPlaying())
@@ -539,34 +571,73 @@ void update_main(void)
 			Audio_Pause();
 		}
 	}
-	
+
+	//´ÙÀ½¾À ¹× Ãâ·Â¼Óµµ ¹Ù²ãÁÖ±â
 	if (Input_GetKeyDown(VK_SPACE))
 	{
-	
-		prevSceneNum = sceneNum;
-		sceneNum = data->selectValue[data->playerSelectValue];
-		Scene_SetNextScene(SCENE_MAIN);
+		if (data->textIsShow)
+		{
+			prevSceneNum = sceneNum;
+			sceneNum = data->selectValue[data->playerSelectValue];
+			Scene_SetNextScene(SCENE_MAIN);
+		}
 	}
 
+	if (Input_GetKey(VK_SPACE))
+	{
+		if (data->text3Speed > 0.0f)
+			data->text3Speed -= 0.005f;
+
+	}
+
+	if (Input_GetKeyUp(VK_SPACE))
+	{
+		data->text3Speed = ParseToFloat(csvFile.Items[sceneNum][textSpeed]);
+	}
+
+	//¼±ÅÃÁö ¼±ÅÃ
 	if (Input_GetKeyDown(VK_UP))
 	{
 		if (data->playerSelectValue > 1)
 			--data->playerSelectValue;
 	}
-	
+
 	if (Input_GetKeyDown(VK_DOWN))
 	{
 		if (data->playerSelectValue < data->selectCount)
 			++data->playerSelectValue;
 	}
 
+	//ÀÌÀü¾ÀÀ¸·Î µ¹¾Æ°¡±â
 	if (Input_GetKeyDown(VK_BACK))
 	{
 		sceneNum = prevSceneNum;
-		
+
 		Scene_SetNextScene(SCENE_MAIN);
 	}
+
+	// 1±ÛÀÚ¾¿ Ãâ·Â
+	data->text3DelayElapsedtime += Timer_GetDeltaTime();
+	if (data->text3DelayElapsedtime >= data->text3Delay)
+	{
+		if (data->text3LoadLen != data->text3Len)
+		{
+			data->text3Elapsedtime += Timer_GetDeltaTime();
+			if (data->text3Elapsedtime >= data->text3Speed)
+			{
+				data->text3Elapsedtime = 0;
+				++data->text3LoadLen;
+				Text_CreateText(&data->text3, "aL.ttf", data->text3FontSize, ParseToUnicode(csvFile.Items[sceneNum][text3]), data->text3LoadLen);
+				if (data->text3LoadLen == data->text3Len)
+					data->textIsShow = !data->textIsShow;
+			}
+
+		}
+	}
+
+
 }
+
 
 void render_main(void)
 {
@@ -577,12 +648,15 @@ void render_main(void)
 
 	SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
 	SDL_Color color3 = { .r = data->text3RedValue, .g = data->text3GreenValue, .b = data->text3BlueValue, .a = 255 };
-	
-	Renderer_DrawTextBlended(& data->text1, TEXT1_POS_X, TEXT1_POS_Y, color);
+	if (data->text3DelayElapsedtime >= data->text3Delay)
+	{
+		Renderer_DrawTextBlended(&data->text1, TEXT1_POS_X, TEXT1_POS_Y, color);
 
-	Renderer_DrawTextBlended(&data->text2, TEXT2_POS_X - (data->text2.Length / 2 * (TEXT2_FONT_SIZE/1.5)), TEXT2_POS_Y, color);
+		Renderer_DrawTextBlended(&data->text2, TEXT2_POS_X - (data->text2.Length / 2 * (TEXT2_FONT_SIZE / 1.5)), TEXT2_POS_Y, color);
 
-	Renderer_DrawTextBlended(&data->text3, TEXT3_POS_X - (data->text3.Length / 2 * (data->text3FontSize/1.5)), TEXT3_POS_Y, color3);
+		Renderer_DrawTextBlended(&data->text3, TEXT3_POS_X - (data->text3.Length / 2 * (data->text3FontSize / 1.5)), TEXT3_POS_Y, color3);
+
+	}
 
 
 
