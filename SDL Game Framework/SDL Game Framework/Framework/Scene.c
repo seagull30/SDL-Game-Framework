@@ -208,7 +208,6 @@ void init_prologue(void)
 	
 	Image_LoadImage(&data->image, "index3.jpg");
 
-
 	data->elapsedTime = 0;
 	data->textLen = wcslen(str[0]);
 	data->textLoadLen = 0;
@@ -218,9 +217,6 @@ void init_prologue(void)
 void update_prologue(void)
 {
 	PrologueSceneData* data = (PrologueSceneData*)g_Scene.Data;
-
-	
-	
 
 	if (Input_GetKeyDown(VK_SPACE))
 	{
@@ -288,11 +284,12 @@ typedef struct MainSceneData
 	Image		BackGround;
 	int32		BackGroundX;
 	int32		BackGroundY;
-	bool		BackGroundEffectisActive;
-	int32		BackGroundEffectCount;
-	int32		BackGroundEffectElasedTime;
-
 	int32		imageEffect;
+	bool		BackGroundEffectisActive;
+	int32		BackGroundEffectTotalCount;
+	int32		BackGroundEffectCurrentCount;
+	float		BackGroundEffectElasedTime;
+
 
 	int32		textEffect;
 
@@ -307,7 +304,7 @@ typedef struct MainSceneData
 	int32		text3FontSize;
 	bool		text3isITALIC;
 	Text		text3;
-	int32		text3Delay;
+	float		text3Delay;
 	float		text3DelayElapsedtime;
 	int32		text3Len;
 	int32		text3LoadLen;
@@ -513,17 +510,36 @@ void init_main(void)
 	
 	switch (data->imageEffect)
 	{
-	case 1:
-		data->BackGroundEffectCount = 6;
-		data->BackGroundEffectElasedTime = 0;
-		break;
 	case 2:
-		data->BackGroundEffectCount = 6;
+		data->BackGroundEffectTotalCount = 10;
+		data->BackGroundEffectCurrentCount = 0;
 		data->BackGroundEffectElasedTime = 0;
+		data->BackGround.ScaleX += 0.05f;
+		data->BackGround.ScaleY += 0.05f;
+		data->BackGroundEffectisActive = true;
+		break;
+	case 3:
+		data->BackGroundEffectTotalCount = 2;
+		data->BackGroundEffectCurrentCount = 0;
+		data->BackGroundEffectElasedTime = 0;
+		data->BackGroundEffectisActive = true;
+		break;
+	case 4:
+		data->BackGroundEffectTotalCount = 4;
+		data->BackGroundEffectCurrentCount = 0;
+		data->BackGroundEffectElasedTime = 0;
+		data->BackGroundEffectisActive = true;
+		break;
+	case 5:
+		data->BackGroundEffectTotalCount = 10;
+		data->BackGroundEffectCurrentCount = 0;
+		data->BackGroundEffectElasedTime = 0;
+		data->BackGroundEffectisActive = true;
 		break;
 	default:
 		break;
 	}
+
 	if (ParseToAscii(csvFile.Items[sceneNum][EffectSound])[0] != '0')
 	{
 		Audio_LoadSoundEffect(&data->Effect, ParseToAscii(csvFile.Items[sceneNum][EffectSound]));
@@ -591,6 +607,8 @@ void update_main(void)
 		{
 			prevSceneNum = sceneNum;
 			sceneNum = data->selectValue[data->playerSelectValue - 1];
+		if(sceneNum==488)
+			Scene_SetNextScene(SCENE_CREDIT);
 			Scene_SetNextScene(SCENE_MAIN);
 		}
 	}
@@ -646,6 +664,53 @@ void update_main(void)
 					data->textIsShow = !data->textIsShow;
 			}
 
+		}
+	}
+	// ¿ÃπÃ¡ˆ ¿Ã∆Â∆Æ
+	if (data->BackGroundEffectisActive)
+	{
+		data->BackGroundEffectElasedTime += Timer_GetDeltaTime();
+		if (data->BackGroundEffectElasedTime >= 0.05f)
+		{
+			data->BackGroundEffectElasedTime = 0;
+			if (data->BackGroundEffectCurrentCount != data->BackGroundEffectTotalCount)
+				++data->BackGroundEffectCurrentCount;
+			switch (data->imageEffect)
+			{
+			case 2:
+				if (data->BackGroundEffectCurrentCount == data->BackGroundEffectTotalCount)
+				{
+					data->BackGround.ScaleX -= 0.045f;
+					data->BackGround.ScaleY -= 0.045f;
+					data->BackGroundX = 0;
+					data->BackGroundEffectisActive = false;
+				}
+				else if (data->BackGroundEffectCurrentCount % 2 == 0)
+				{
+					data->BackGroundX = 0;
+					data->BackGroundX = 0;
+				}
+				else
+				{
+					data->BackGroundX = -5;
+					data->BackGroundX = -5;
+				}
+				break;
+
+			case 3: case 4: case 5: 
+				if (data->BackGroundEffectCurrentCount == data->BackGroundEffectTotalCount)
+				{
+					data->BackGroundEffectisActive = false;
+					Image_SetAlphaValue(&data->BackGround, 255);
+				}
+				else if (data->BackGroundEffectCurrentCount % 2 == 0)
+					Image_SetAlphaValue(&data->BackGround, 255);
+				else
+					Image_SetAlphaValue(&data->BackGround, 0);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
@@ -723,6 +788,96 @@ void release_main(void)
 }
 #pragma endregion
 
+
+#pragma region Credit
+
+const wchar_t* str2[] = {
+	L"CREDIT",
+	L"",
+	L"±‚»ππ›",
+	L"∞≠¿Á»∆",
+	L"ø¿¿Ø¡§",
+	L"¿Ã«˝Ω¬",
+	L"",
+	L"∞≥πﬂπ›",
+	L"∞•πŒªÛ",
+	L"øÎ¡ÿ«Â",
+	L"√÷º±øÏ"
+};
+
+#define NAME_COUNT 11
+
+typedef struct CreditSceneData
+{
+	Text		Name[NAME_COUNT];
+	int32		textPosX;
+	int32		textPosY;
+	Music		BGM;
+	Image		BackGround;
+	int32		X;
+	int32		Y;
+	float		elapsedTime;
+} CreditSceneData;
+
+
+void init_CREDIT(void)
+{
+	g_Scene.Data = malloc(sizeof(CreditSceneData));
+	memset(g_Scene.Data, 0, sizeof(CreditSceneData));
+	CreditSceneData* data = (CreditSceneData*)g_Scene.Data;
+	Audio_FreeMusic(&backmusic);
+	FreeCsvFile(&csvFile);
+
+	for (int32 i = 0; i < NAME_COUNT; ++i)
+	{
+		Text_CreateText(&data->Name[i], "aB.ttf", 50, str2[i], wcslen(str2[i]));
+	}
+	Image_LoadImage(&data->BackGround, "15.jpg");
+	Audio_LoadMusic(&data->BGM, "index1.mp3");
+	Audio_Play(&data->BGM, INFINITY_LOOP);
+	data->textPosX = 1080;
+	data->textPosY = 900;
+	data->X = 0;
+	data->Y = 0;
+}
+void update_CREDIT(void)
+{
+	CreditSceneData* data = (CreditSceneData*)g_Scene.Data;
+	data->elapsedTime += Timer_GetDeltaTime();
+	if(data->elapsedTime>=0.5f)
+		data->textPosY = Clamp(100, data->textPosY - 1, 1080);
+}
+void render_CREDIT(void)
+{
+	CreditSceneData* data = (CreditSceneData*)g_Scene.Data;
+
+	Renderer_DrawImage(&data->BackGround, data->X, data->Y);
+
+	for (int32 i = 0; i < NAME_COUNT; ++i)
+	{
+
+		SDL_Color color = { .r = 255, .g = 255, .b = 255, .a = 255 };
+		Renderer_DrawTextSolid(&data->Name[i], data->textPosX, data->textPosY + (50 * (i + 1)), color);
+
+	}
+}
+void release_CREDIT(void)
+{
+	CreditSceneData* data = (CreditSceneData*)g_Scene.Data;
+	for (int32 i = 0; i < NAME_COUNT; ++i)
+	{
+		Text_FreeText(&data->Name[i]);
+	}
+	Image_FreeImage(&data->BackGround);
+	Audio_FreeMusic(&data->BGM);
+	SafeFree(g_Scene.Data);
+}
+
+#pragma endregion
+
+
+
+
 bool Scene_IsSetNextScene(void)
 {
 	if (SCENE_NULL == s_nextScene)
@@ -777,6 +932,12 @@ void Scene_Change(void)
 		g_Scene.Update = update_main;
 		g_Scene.Render = render_main;
 		g_Scene.Release = release_main;
+		break;
+	case SCENE_CREDIT:
+		g_Scene.Init = init_CREDIT;
+		g_Scene.Update = update_CREDIT;
+		g_Scene.Render = render_CREDIT;
+		g_Scene.Release = release_CREDIT;
 		break;
 	}
 
